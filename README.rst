@@ -1,5 +1,5 @@
- UNICEF Rest Extra
- =================
+UNICEF Rest Extra
+=================
 
 Django package that handles includes rest framework extras
 
