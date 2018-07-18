@@ -7,12 +7,10 @@ flake8
 isort
 mccabe
 more-itertools
-packaging
 pluggy
 py
 pycodestyle
 pyflakes
-pyparsing
 pytest-cov
 pytest-django
 pytest-echo
@@ -21,5 +19,3 @@ pytest
 python-dateutil
 six
 text-unidecode
-tox
-virtualenv

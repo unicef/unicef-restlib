@@ -1,5 +1,10 @@
+django-fsm
 django-model-utils
-django-ordered-model
 django
+djangorestframework-csv
+djangorestframework-recursive
 djangorestframework
-psycopg2-binary
+pytz
+six
+unicef-djangolib
+unicodecsv
