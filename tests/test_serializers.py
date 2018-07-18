@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
 import pytest
-from demo.sample.models import Activity, Author, Book, Image, ISBN
+from demo.sample.models import Activity, Author, Book, Image, ISBN, Review
 from demo.sample.serializers import (
     AuthorIDSerializer,
     AuthorPKSerializer,
@@ -9,10 +9,7 @@ from demo.sample.serializers import (
     BookISBNSerializer,
     ISBNForwardSerializer,
 )
-from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
-from django.db import connection
-from django.test import TestCase
 from rest_framework import serializers
 
 pytestmark = pytest.mark.django_db
@@ -60,7 +57,7 @@ def test_one_to_one_partial_update(book, isbn):
     })
 
     serializer.is_valid(raise_exception=True)
-    book_updated = serializer.save()
+    serializer.save()
     isbn_updated = ISBN.objects.get(pk=isbn.pk)
     assert isbn_updated.code == "54321"
 
@@ -119,7 +116,7 @@ def test_many_create():
     })
 
     serializer.is_valid(raise_exception=True)
-    author = serializer.save()
+    serializer.save()
     assert author_qs.exists()
 
 
@@ -138,7 +135,7 @@ def test_many_update(author, books):
         "last_name": "Soap",
         "books": [
             {"id": book_1.pk, "name": book_1_name, "sku_number": "123"},
-            {"id": book_2.pk, "name": book_2_name, "sku_number": "321",}
+            {"id": book_2.pk, "name": book_2_name, "sku_number": "321"},
         ]
     })
 
@@ -182,8 +179,8 @@ def test_many_create_through_update(author):
     assert book_qs.count() == 0
     serializer = AuthorSerializer(author, partial=True, data={
         "books": [
-            {"name": "Book 1", "sku_number": "123",},
-            {"name": "Book 2", "sku_number": "321",},
+            {"name": "Book 1", "sku_number": "123"},
+            {"name": "Book 2", "sku_number": "321"},
         ]
     })
 
@@ -243,7 +240,7 @@ def test_many_partial_update_mix(author, book):
 
 def test_many_deleting_excess(author, books):
     book_1 = books.get(author=author)
-    book_2 = books.get(author=author)
+    books.get(author=author)
     book_qs = Book.objects.filter(author=author)
     assert book_qs.count() == 2
     serializer = AuthorSerializer(author, data={
@@ -278,7 +275,9 @@ def test_many_missed(author):
     with pytest.raises(serializers.ValidationError) as err:
         serializer.save()
 
-    assert {"books": [{"id": ["Book with pk `404` doesn't exists."]}]}
+    assert err.value.detail == {"books": [
+        {"id": ["Book with pk `404` doesn't exists."]}
+    ]}
     assert book_qs.exists() is False
 
 
@@ -562,8 +561,9 @@ def test_unique_together(author, user):
     })
 
     serializer.is_valid(raise_exception=True)
-    with self.assertRaises(serializers.ValidationError) as err:
+    with pytest.raises(serializers.ValidationError) as err:
         serializer.save()
+
     assert err.value.detail == {"reviews": [
         {"non_field_error": [
             "This fields author, user must make a unique set."

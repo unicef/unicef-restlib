@@ -7,25 +7,6 @@ from django.forms.models import model_to_dict
 pytestmark = pytest.mark.django_db
 
 
-class SeparateReadWriteTestCase:
-    @classmethod
-    def setUpTestData(cls):
-        # We disable synchronisation of test models. So we need to create it manually.
-        with connection.schema_editor() as editor:
-            editor.create_model(Parent)
-            editor.create_model(Child1)
-            editor.create_model(Child4)
-
-        cls.parent, _ = Parent.objects.get_or_create(id=1, field=1)
-        cls.child1, _ = Child1.objects.get_or_create(
-            field=2,
-            parent=cls.parent
-        )
-        cls.child4, _ = Child4.objects.get_or_create(
-            field=2,
-            parent=cls.parent
-        )
-
 def test_representation(author, book):
     serializer = BookSeparatedSerializer(book)
 

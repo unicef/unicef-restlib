@@ -289,8 +289,8 @@ class WritableNestedParentSerializerMixin(object):
     def writable_nested_serializers(self):
         return [
             field_name for field_name, field in self.fields.items()
-            if isinstance(field, serializers.BaseSerializer)
-            and not field.read_only
+            if isinstance(field, serializers.BaseSerializer) and
+            not field.read_only
         ]
 
     def _get_related_model_field(self, nested_serializer):
