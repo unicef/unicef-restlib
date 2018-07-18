@@ -1,0 +1,5 @@
+django-model-utils
+django-ordered-model
+django
+djangorestframework
+psycopg2-binary

@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+djangorestframework = "*"
+django = "*"
+unicef-djangolib = ">=0.4"
+djangorestframework-recursive = "*"
+
+[dev-packages]
+coverage = "*"
+factory-boy = "*"
+"flake8" = "*"
+isort = "*"
+pytest-cov = "*"
+pytest-django = "*"
+pytest-echo = "*"
+pytest-pythonpath = "*"
+
+[requires]
+python_version = "3.6"
