@@ -1,7 +1,11 @@
 from demo.sample.models import Activity, Author, Book, Category, Image, ISBN, Review
 from rest_framework import serializers
 
-from unicef_restlib.fields import SeparatedReadWriteField, WriteListSerializeFriendlyRecursiveField
+from unicef_restlib.fields import (
+    CommaSeparatedExportField,
+    SeparatedReadWriteField,
+    WriteListSerializeFriendlyRecursiveField,
+)
 from unicef_restlib.serializers import (
     DeletableSerializerMixin,
     PKSerializerMixin,
@@ -46,6 +50,11 @@ class AuthorSerializer(WritableNestedParentSerializerMixin, serializers.ModelSer
     profile_images = ImageSerializer(many=True, required=False)
     full_images = ImageSerializer(many=True, required=False)
     reviews = ReviewSerializer(many=True, required=False)
+    review_ratings = CommaSeparatedExportField(
+        source="reviews",
+        required=False,
+        export_attr="rating"
+    )
 
     class Meta:
         model = Author

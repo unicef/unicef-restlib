@@ -77,6 +77,14 @@ def review(author, user):
 
 
 @pytest.fixture
+def reviews(author, user):
+    class ReviewFactory:
+        def get(self, **kwargs):
+            return factories.ReviewFactory(**kwargs)
+    return ReviewFactory()
+
+
+@pytest.fixture
 def category():
     return factories.CategoryFactory()
 

@@ -1,7 +1,12 @@
 from collections import OrderedDict
 
 import pytest
-from demo.sample.serializers import BookSeparatedSerializer, BookSeparatedWriteSerializer, BookSerializer
+from demo.sample.serializers import (
+    AuthorSerializer,
+    BookSeparatedSerializer,
+    BookSeparatedWriteSerializer,
+    BookSerializer,
+)
 from django.forms.models import model_to_dict
 
 pytestmark = pytest.mark.django_db
@@ -120,3 +125,11 @@ def test_field_building(book):
     assert field1.__class__ == field2.__class__
     assert field1._args == field2._args
     assert field1._kwargs == field2._kwargs
+
+
+def test_comma_separated_export_field(author, reviews):
+    reviews.get(author=author, rating=1)
+    reviews.get(author=author, rating=2)
+    serializer = AuthorSerializer(author)
+    data = serializer.data
+    assert data["review_ratings"] == "1, 2"
