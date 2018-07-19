@@ -3,7 +3,6 @@ from rest_framework.fields import empty, Field, SkipField
 from rest_framework.utils import model_meta
 from rest_framework_recursive.fields import RecursiveField
 
-from unicef_restlib.serializers import WritableListSerializer
 from unicef_restlib.utils import get_attribute_smart
 
 
