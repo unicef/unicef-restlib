@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 import pytest
-from demo.sample.serializers import BookSeparatedSerializer, BookSerializer
+from demo.sample.serializers import BookSeparatedSerializer, BookSeparatedWriteSerializer, BookSerializer
 from django.forms.models import model_to_dict
 
 pytestmark = pytest.mark.django_db
@@ -51,6 +51,52 @@ def test_validation():
     assert serializer.errors == {"author": [
         "Invalid pk \"404\" - object does not exist."
     ]}
+
+
+def test_validate_empty_not_required():
+    """Empty value for non-required field, still passes validation"""
+    serializer = BookSeparatedSerializer(data={
+        "name": "Scary Tales",
+        "sku_number": "123",
+    })
+    assert serializer.is_valid()
+
+
+def test_validate_empty_required():
+    serializer = BookSeparatedWriteSerializer(data={
+        "name": "Scary Tales",
+        "sku_number": "123",
+    })
+    assert not serializer.is_valid()
+    assert serializer.errors == {"author": ["This field is required."]}
+
+
+def test_validate_empty_required_partial(book):
+    serializer = BookSeparatedWriteSerializer(book, partial=True, data={
+        "name": "Scary Tales",
+        "sku_number": "123",
+    })
+    assert serializer.is_valid()
+
+
+def test_validate_none_not_required():
+    """None value for non-required field, still passes validation"""
+    serializer = BookSeparatedSerializer(data={
+        "name": "Scary Tales",
+        "sku_number": "123",
+        "author": None
+    })
+    assert serializer.is_valid()
+
+
+def test_validate_none_required():
+    serializer = BookSeparatedWriteSerializer(data={
+        "name": "Scary Tales",
+        "sku_number": "123",
+        "author": None
+    })
+    assert not serializer.is_valid()
+    assert serializer.errors == {"author": ["This field may not be null."]}
 
 
 def test_serializers_tree(book):
