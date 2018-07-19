@@ -1,12 +1,14 @@
-from demo.sample.models import Activity, Author, Book, Image, ISBN, Review
+from demo.sample.models import Activity, Author, Book, Category, Image, ISBN, Review
 from rest_framework import serializers
 
-from unicef_restlib.fields import SeparatedReadWriteField
+from unicef_restlib.fields import SeparatedReadWriteField, WriteListSerializeFriendlyRecursiveField
 from unicef_restlib.serializers import (
     DeletableSerializerMixin,
     PKSerializerMixin,
+    RecursiveListSerializer,
     WritableNestedChildSerializerMixin,
     WritableNestedParentSerializerMixin,
+    WritableNestedSerializerMixin,
 )
 
 
@@ -98,9 +100,31 @@ class AuthorSeparatedSerializer(serializers.ModelSerializer):
 
 class BookSeparatedSerializer(serializers.ModelSerializer):
     author = SeparatedReadWriteField(
-        read_field=AuthorSeparatedSerializer(read_only=True)
+        read_field=AuthorSeparatedSerializer(read_only=True),
     )
 
     class Meta:
         model = Book
         fields = ("id", "author", "name", "sku_number",)
+
+
+class BookSeparatedWriteSerializer(serializers.ModelSerializer):
+    author = SeparatedReadWriteField(
+        read_field=AuthorSeparatedSerializer(read_only=True),
+        write_field=AuthorSeparatedSerializer(),
+    )
+
+    class Meta:
+        model = Book
+        fields = ("id", "author", "name", "sku_number",)
+
+
+class CategorySerializer(WritableNestedSerializerMixin, serializers.ModelSerializer):
+    children = RecursiveListSerializer(
+        child=WriteListSerializeFriendlyRecursiveField(required=False),
+        required=False
+    )
+
+    class Meta(WritableNestedSerializerMixin.Meta):
+        model = Category
+        fields = ("id", "name", "parent", "children",)

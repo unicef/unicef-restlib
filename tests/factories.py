@@ -65,3 +65,10 @@ class ReviewFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = models.Review
+
+
+class CategoryFactory(factory.django.DjangoModelFactory):
+    name = factory.Faker("word")
+
+    class Meta:
+        model = models.Category

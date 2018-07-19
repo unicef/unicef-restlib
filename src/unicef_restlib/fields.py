@@ -108,17 +108,15 @@ class SeparatedReadWriteField(Field):
 class WriteListSerializeFriendlyRecursiveField(RecursiveField):
     @property
     def proxied(self):
-        self._proxied = super(WriteListSerializeFriendlyRecursiveField, self).proxied
-        if self._proxied and not self._proxied.context and self.bind_args[1] and self.bind_args[1].context:
+        self._proxied = super().proxied
+        if (
+                self._proxied and
+                not self._proxied.context and
+                self.bind_args[1] and
+                self.bind_args[1].context
+        ):
             self._proxied.context = self.bind_args[1].context
         return self._proxied
-
-
-class RecursiveListSerializer(WritableListSerializer):
-    def update(self, instance, validated_data):
-        if hasattr(self.child, 'proxied'):
-            self.child = self.child.proxied
-        return super(RecursiveListSerializer, self).update(instance, validated_data)
 
 
 class CommaSeparatedExportField(serializers.Field):

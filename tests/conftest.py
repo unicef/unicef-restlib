@@ -74,3 +74,16 @@ def images(author):
 @pytest.fixture
 def review(author, user):
     return factories.ReviewFactory(author=author, user=user)
+
+
+@pytest.fixture
+def category():
+    return factories.CategoryFactory()
+
+
+@pytest.fixture
+def categories():
+    class CategoryFactory:
+        def get(self, **kwargs):
+            return factories.CategoryFactory(**kwargs)
+    return CategoryFactory()

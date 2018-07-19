@@ -1,12 +1,13 @@
 from unittest.mock import Mock
 
 import pytest
-from demo.sample.models import Activity, Author, Book, Image, ISBN, Review
+from demo.sample.models import Activity, Author, Book, Category, Image, ISBN, Review
 from demo.sample.serializers import (
     AuthorIDSerializer,
     AuthorPKSerializer,
     AuthorSerializer,
     BookISBNSerializer,
+    CategorySerializer,
     ISBNForwardSerializer,
 )
 from django.contrib.contenttypes.models import ContentType
@@ -606,6 +607,26 @@ def test_deleting_on_create(author):
         "books": [{"_delete": ["You can't delete not exist object."]}]
     }
 
+
+# RecursiveListSerializer Tests
+
+def test_recursive_list(categories):
+    category = categories.get()
+    category_qs = Category.objects.filter(name="New Child", parent=category)
+    assert not category_qs.exists()
+    serializer = CategorySerializer(category, data={
+        "name": "New Category",
+        "children": [{"name": "New Child"}]
+    })
+
+    assert serializer.is_valid()
+    category = serializer.save()
+
+    assert category.name == "New Category"
+    assert category_qs.exists()
+
+
+# PKSerializerMixin Tests
 
 def test_pk_field():
     serializer = AuthorPKSerializer()

@@ -493,3 +493,10 @@ class WritableNestedSerializerMixin(
 class UserContextSerializerMixin(object):
     def get_user(self):
         return self.context.get('user') or self.context.get('request').user
+
+
+class RecursiveListSerializer(WritableListSerializer):
+    def update(self, instance, validated_data):
+        if hasattr(self.child, 'proxied'):
+            self.child = self.child.proxied
+        return super(RecursiveListSerializer, self).update(instance, validated_data)
