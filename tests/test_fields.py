@@ -47,7 +47,7 @@ def test_validation():
         "author": 404,
     })
 
-    assert serializer.is_valid() is False
+    assert not serializer.is_valid()
     assert serializer.errors == {"author": [
         "Invalid pk \"404\" - object does not exist."
     ]}

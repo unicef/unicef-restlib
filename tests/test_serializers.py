@@ -64,7 +64,7 @@ def test_one_to_one_partial_update(book, isbn):
 
 def test_one_to_one_create_through_update(book):
     isbn_qs = ISBN.objects.filter(book=book, code="54321")
-    assert isbn_qs.exists() is False
+    assert not isbn_qs.exists()
     serializer = BookISBNSerializer(book, partial=True, data={
         'isbn': {
             'code': "54321",
@@ -99,13 +99,13 @@ def test_one_to_one_nullable(book, isbn):
 
     serializer.is_valid(raise_exception=True)
     serializer.save()
-    assert isbn_qs.exists() is False
+    assert not isbn_qs.exists()
 
 
 def test_many_create():
     assert Book.objects.count() == 0
     author_qs = Author.objects.filter(first_name="Joe")
-    assert author_qs.exists() is False
+    assert not author_qs.exists()
     serializer = AuthorSerializer(data={
         "first_name": "Joe",
         "last_name": "Soap",
@@ -264,7 +264,7 @@ def test_many_deleting_excess(author, books):
 
 def test_many_missed(author):
     book_qs = Book.objects.filter(author=author)
-    assert book_qs.exists() is False
+    assert not book_qs.exists()
     serializer = AuthorSerializer(author, partial=True, data={
         "books": [
             {"id": 404, "name": "Scary Tales", "sku_number": "123"}
@@ -278,7 +278,7 @@ def test_many_missed(author):
     assert err.value.detail == {"books": [
         {"id": ["Book with pk `404` doesn't exists."]}
     ]}
-    assert book_qs.exists() is False
+    assert not book_qs.exists()
 
 
 def test_many_duplication(author, book):
@@ -328,7 +328,7 @@ def test_many_nesting_raises(author, books):
 
 def test_forward_create():
     isbn_qs = ISBN.objects.filter(code="54321")
-    assert isbn_qs.exists() is False
+    assert not isbn_qs.exists()
     serializer = ISBNForwardSerializer(data={
         "code": "54321",
         "book": {
@@ -439,7 +439,7 @@ def test_generic_create_through_update(author):
         content_type=author_content_type,
         object_id=author.pk
     )
-    assert activity_qs.exists() is False
+    assert not activity_qs.exists()
 
     serializer = AuthorSerializer(author, partial=True, data={
         "activities": [
@@ -547,7 +547,7 @@ def test_unique_for_new(author):
             "book with this sku number already exists."
         ]}
     ]}
-    assert Book.objects.filter(author=author).exists() is False
+    assert not Book.objects.filter(author=author).exists()
 
 
 # TODO: Fix this.
@@ -569,7 +569,7 @@ def test_unique_together(author, user):
             "This fields author, user must make a unique set."
         ]}
     ]}
-    assert Review.objects.filter(author=author).exists() is False
+    assert not Review.objects.filter(author=author).exists()
 
 
 def test_deleting(author, books):
