@@ -23,6 +23,7 @@ def test_representation(author, book):
             "id": author.pk,
             "first_name": author.first_name,
             "last_name": author.last_name,
+            "active": True,
         }
     }
 
@@ -41,7 +42,7 @@ def test_creation(author):
         "id": book.pk,
         "name": "Scary Tales",
         "sku_number": "123",
-        "author": OrderedDict(model_to_dict(author))
+        "author": OrderedDict(model_to_dict(author)),
     }
 
 
@@ -133,3 +134,26 @@ def test_comma_separated_export_field(author, reviews):
     serializer = AuthorSerializer(author)
     data = serializer.data
     assert data["review_ratings"] == "1, 2"
+
+
+def test_dynamic_choices_field():
+    serializer = BookSerializer(data={
+        "name": "Scary Tales",
+        "genre": "western",
+        "sku_number": "123"
+    })
+
+    assert serializer.is_valid()
+    data = serializer.data
+    assert data["genre"] == "Western"
+
+
+def test_dynamic_choices_field_invalid():
+    serializer = BookSerializer(data={
+        "name": "Scary Tales",
+        "genre": "wrong",
+        "sku_number": "123"
+    })
+
+    assert not serializer.is_valid()
+    assert serializer.errors == {"genre": ["\"wrong\" is not a valid choice."]}

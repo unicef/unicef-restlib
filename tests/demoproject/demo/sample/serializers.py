@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from unicef_restlib.fields import (
     CommaSeparatedExportField,
+    DynamicChoicesField,
     SeparatedReadWriteField,
     WriteListSerializeFriendlyRecursiveField,
 )
@@ -39,9 +40,11 @@ class BookSerializer(
         WritableNestedChildSerializerMixin,
         serializers.ModelSerializer
 ):
+    genre = DynamicChoicesField(choices=Book.GENRE_CHOICES, required=False)
+
     class Meta(DeletableSerializerMixin.Meta, WritableNestedChildSerializerMixin.Meta):
         model = Book
-        fields = ("id", "name", "sku_number", "author",)
+        fields = ("id", "name", "sku_number", "author", "genre",)
 
 
 class AuthorSerializer(WritableNestedParentSerializerMixin, serializers.ModelSerializer):
@@ -104,7 +107,7 @@ class ISBNForwardSerializer(WritableNestedParentSerializerMixin, serializers.Mod
 class AuthorSeparatedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ("id", "first_name", "last_name",)
+        fields = ("id", "first_name", "last_name", "active",)
 
 
 class BookSeparatedSerializer(serializers.ModelSerializer):

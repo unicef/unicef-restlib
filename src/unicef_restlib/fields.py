@@ -1,3 +1,4 @@
+from model_utils import Choices
 from rest_framework import serializers
 from rest_framework.fields import empty, Field, SkipField
 from rest_framework.utils import model_meta
@@ -170,6 +171,8 @@ class DynamicChoicesField(serializers.ChoiceField):
 
     @property
     def choice_strings_to_values(self):
+        if isinstance(self.choices, Choices):
+            return {k: v for k, v in self.choices}
         return {
             str(key): key for key in self.choices.keys()
         }

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from model_utils import Choices
 from unicef_djangolib.fields import CodedGenericRelation
 
 
@@ -27,12 +28,20 @@ class Author(models.Model):
     profile_images = CodedGenericRelation(Image, code="author_profile_image")
     full_images = CodedGenericRelation(Image, code="author_full_image")
     activities = GenericRelation(Activity)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return "{} {}".format(self.first_name, self.last_name)
 
 
 class Book(models.Model):
+    GENRE_CHOICES = Choices(
+        ("fantasy", "Fantasy"),
+        ("scifi", "Sci-Fi"),
+        ("thriller", "Thriller"),
+        ("western", "Western"),
+    )
+
     author = models.ForeignKey(
         Author,
         related_name="books",
@@ -42,6 +51,7 @@ class Book(models.Model):
     )
     name = models.CharField(max_length=150)
     sku_number = models.CharField(max_length=20, unique=True)
+    genre = models.CharField(max_length=50, blank=True, choices=GENRE_CHOICES)
 
     def __str__(self):
         return self.name
