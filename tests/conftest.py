@@ -28,6 +28,14 @@ def author():
 
 
 @pytest.fixture
+def authors():
+    class AuthorFactory:
+        def get(self):
+            return factories.AuthorFactory()
+    return AuthorFactory()
+
+
+@pytest.fixture
 def book(author):
     return factories.BookFactory(author=author)
 
