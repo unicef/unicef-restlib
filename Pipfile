@@ -8,6 +8,7 @@ djangorestframework = "*"
 django = "*"
 unicef-djangolib = ">=0.4"
 djangorestframework-recursive = "*"
+drf-nested-routers = "*"
 
 [dev-packages]
 coverage = "*"
