@@ -4,6 +4,7 @@ django
 djangorestframework-csv
 djangorestframework-recursive
 djangorestframework
+drf-nested-routers
 pytz
 six
 unicef-djangolib
