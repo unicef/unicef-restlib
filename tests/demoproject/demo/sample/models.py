@@ -14,12 +14,23 @@ class Activity(models.Model):
     obj = GenericForeignKey()
 
 
+class FileType(models.Model):
+    name = models.CharField(max_length=50)
+    code = models.CharField(max_length=30, unique=True)
+
+
 class Image(models.Model):
     filename = models.CharField(max_length=150)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.IntegerField()
     obj = GenericForeignKey()
     code = models.CharField(max_length=50, blank=True)
+    file_type = models.ForeignKey(
+        FileType,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
 
 
 class Author(models.Model):

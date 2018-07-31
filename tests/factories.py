@@ -10,6 +10,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = get_user_model()
+        django_get_or_create = ("username",)
 
 
 class AuthorFactory(factory.django.DjangoModelFactory):
@@ -44,6 +45,15 @@ class ActivityFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = models.Activity
+
+
+class FileTypeFactory(factory.django.DjangoModelFactory):
+    name = factory.Faker("word")
+    code = factory.Faker("word")
+
+    class Meta:
+        model = models.FileType
+        django_get_or_create = ("code",)
 
 
 class ImageFactory(factory.django.DjangoModelFactory):

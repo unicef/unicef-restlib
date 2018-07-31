@@ -6,8 +6,10 @@ from demo.sample.serializers import (
     BookSeparatedSerializer,
     BookSeparatedWriteSerializer,
     BookSerializer,
+    ImageFileTypeSerializer,
 )
 from django.forms.models import model_to_dict
+from tests.factories import FileTypeFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -157,3 +159,24 @@ def test_dynamic_choices_field_invalid():
 
     assert not serializer.is_valid()
     assert serializer.errors == {"genre": ["\"wrong\" is not a valid choice."]}
+
+
+def test_model_choice_field_valid_serializer():
+    file_type = FileTypeFactory(code="image")
+    valid_serializer = ImageFileTypeSerializer(
+        data={'file_type': file_type.pk}
+    )
+    assert valid_serializer.is_valid()
+
+
+def test_model_choice_field_invalid_serializer():
+    file_type = FileTypeFactory(code="wrong")
+    invalid_serializer = ImageFileTypeSerializer(
+        data={'file_type': file_type.pk}
+    )
+    assert not invalid_serializer.is_valid()
+    assert 'file_type' in invalid_serializer.errors
+    s = 'Invalid option "{pk_value}" - option is not available.'.format(
+        pk_value=file_type.pk
+    )
+    assert s in invalid_serializer.errors['file_type']
