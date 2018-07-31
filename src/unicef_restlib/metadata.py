@@ -6,7 +6,7 @@ from rest_framework import exceptions
 from rest_framework.fields import ChoiceField
 from rest_framework.request import clone_request
 
-from unicef_restlib.fields import SeparatedReadWriteField
+from unicef_restlib.fields import ModelChoiceField, SeparatedReadWriteField
 
 
 class SeparatedReadWriteFieldMetadata(object):
@@ -141,6 +141,25 @@ class ReadOnlyFieldWithChoicesMixin(object):
     def get_field_info(self, field):
         field_info = super().get_field_info(field)
         if isinstance(field, ChoiceField) and hasattr(field, 'choices'):
+            field_info['choices'] = [
+                {
+                    'value': choice_value,
+                    'display_name': force_text(choice_name, strings_only=True)
+                }
+                for choice_value, choice_name in field.choices.items()
+            ]
+        return field_info
+
+
+class ModelChoiceFieldMixin(object):
+    """
+    Mixin for displaying field choices based on model data.
+    """
+
+    def get_field_info(self, field):
+        field_info = super(ModelChoiceFieldMixin, self).get_field_info(field)
+        if (not field_info.get('read_only') and
+                isinstance(field, ModelChoiceField) and hasattr(field, 'choices')):
             field_info['choices'] = [
                 {
                     'value': choice_value,

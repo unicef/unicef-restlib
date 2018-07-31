@@ -1,3 +1,6 @@
+from collections import OrderedDict
+
+from django.utils.translation import ugettext_lazy as _
 from model_utils import Choices
 from rest_framework import serializers
 from rest_framework.fields import empty, Field, SkipField
@@ -9,6 +12,24 @@ from unicef_restlib.utils import get_attribute_smart
 
 class builtin_field:
     pass
+
+
+class ModelChoiceField(serializers.PrimaryKeyRelatedField):
+    default_error_messages = {
+        'does_not_exist': _('Invalid option "{pk_value}" - option is not available.'),
+    }
+
+    @property
+    def choices(self):
+        if hasattr(self._choices, '__call__'):
+            self._choices = self._choices()
+        return self._choices
+
+    def get_choice(self, obj):
+        raise NotImplemented
+
+    def _choices(self):
+        return OrderedDict(map(self.get_choice, self.get_queryset()))
 
 
 class SeparatedReadWriteField(Field):

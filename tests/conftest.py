@@ -67,6 +67,11 @@ def activities(author):
 
 
 @pytest.fixture
+def file_type():
+    return factories.FileTypeFactory()
+
+
+@pytest.fixture
 def image(author):
     return factories.ImageFactory(obj=author)
 

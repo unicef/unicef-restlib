@@ -1,4 +1,5 @@
-from demo.sample.models import Activity, Author, Book, Category, Image, ISBN, Review
+from demo.sample.fields import FileTypeModelChoiceField
+from demo.sample.models import Activity, Author, Book, Category, FileType, Image, ISBN, Review
 from rest_framework import serializers
 
 from unicef_restlib.fields import (
@@ -21,6 +22,16 @@ class ActivitySerializer(WritableNestedChildSerializerMixin, serializers.ModelSe
     class Meta(WritableNestedChildSerializerMixin.Meta):
         model = Activity
         fields = ("id", "activity_type", "activity_count",)
+
+
+class ImageFileTypeSerializer(serializers.ModelSerializer):
+    file_type = FileTypeModelChoiceField(
+        queryset=FileType.objects.filter(code='image')
+    )
+
+    class Meta:
+        model = Image
+        fields = ("file_type",)
 
 
 class ImageSerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
