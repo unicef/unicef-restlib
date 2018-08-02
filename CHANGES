@@ -1,7 +1,13 @@
-Release 0.2
+Release 0.3
 ----------------
 * added IsSuperUser permission
 * added QueryStringFilterAPIView
+
+
+Release 0.2
+----------------
+* added ModelChoiceField
+
 
 Release 0.1
 ----------------
