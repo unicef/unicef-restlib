@@ -4,7 +4,8 @@ from rest_framework import viewsets
 from rest_framework.generics import ListAPIView
 
 from unicef_restlib.pagination import DynamicPageNumberPagination
-from unicef_restlib.views import NestedViewSetMixin
+from unicef_restlib.permissions import IsSuperUser
+from unicef_restlib.views import NestedViewSetMixin, QueryStringFilterAPIView
 
 
 class AuthorViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -25,3 +26,13 @@ class BookViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
     def get_parent_filter(self):
         return {"author__active": True}
+
+
+class AuthorView(QueryStringFilterAPIView):
+    queryset = Author.objects.all()
+    serializer_class = serializers.AuthorSerializer
+    permission_classes = (IsSuperUser,)
+    filters = (
+        ('first_name', 'first_name'),
+    )
+    search_terms = ('first_name__istartswith',)

@@ -14,6 +14,7 @@ urlpatterns = [
         views.AuthorPaginateView.as_view(),
         name='authors-paginate'
     ),
+    url(r'^list', view=views.AuthorView.as_view(), name='list'),
 ]
 
 urlpatterns += router.urls

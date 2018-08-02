@@ -1,0 +1,8 @@
+Release 0.2
+----------------
+* added IsSuperUser permission
+* added QueryStringFilterAPIView
+
+Release 0.1
+----------------
+* Initial release
