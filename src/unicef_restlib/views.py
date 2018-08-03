@@ -81,7 +81,8 @@ class NestedViewSetMixin(object):
         return parent_class(
             request=self.request,
             kwargs=self.kwargs,
-            lookup_url_kwarg=self.parent_lookup_kwarg
+            lookup_url_kwarg=self.parent_lookup_kwarg,
+            action='parent',
         )
 
     def get_parent_object(self):
@@ -125,7 +126,7 @@ class NestedViewSetMixin(object):
         return root_object
 
     def filter_queryset(self, queryset):
-        queryset = super(NestedViewSetMixin, self).filter_queryset(queryset)
+        queryset = super().filter_queryset(queryset)
         queryset = queryset.filter(**self._get_parent_filters())
         return queryset
 
