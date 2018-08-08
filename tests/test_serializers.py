@@ -395,8 +395,8 @@ def test_generic_create():
 def test_generic_update(author, activities):
     activity_1 = activities.get()
     activity_2 = activities.get()
-    activity_1_type = "view"
-    activity_2_type = "read"
+    activity_1_type = "".join([activity_1.activity_type, "view"])
+    activity_2_type = "".join([activity_2.activity_type, "read"])
     assert activity_1.activity_type != activity_1_type
     assert activity_2.activity_type != activity_2_type
     serializer = AuthorSerializer(author, data={
