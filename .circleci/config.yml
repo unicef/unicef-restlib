@@ -63,8 +63,8 @@ jobs:
               git tag -a -m "v$TAG" $TAG
               git checkout develop
               git merge --no-ff release/$TAG -m "merge release/$TAG"
-              git push --verbose --all
-              git push --verbose --tags
+              git push origin --verbose --all
+              git push origin --verbose --tags
               git push origin --verbose --delete release/$TAG
             fi
       - run:
