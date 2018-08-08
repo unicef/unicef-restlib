@@ -52,7 +52,7 @@ jobs:
             export TAG=${TAG:=${CIRCLE_BRANCH#*/}}
             git status
             git show-branch release/$TAG
-            if [ $? -gt 0 ];then
+            if [ $? -eq 0 ];then
               git reset --hard
 
               git config user.email "ci@unicef.org"
