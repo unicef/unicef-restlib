@@ -7,6 +7,7 @@ jobs:
         environment:
           PGHOST: 127.0.0.1
           DATABASE_URL: "postgres://postgres:postgres@localhost:5432/test_unicef_restlib"
+          RELEASE_MATCH: "release/*"
       - image: circleci/postgres:9.5-alpine
         environment:
           POSTGRES_USER: postgres
