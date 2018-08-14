@@ -1,3 +1,8 @@
+Release 0.3.4
+----------------
+* changed to QueryStringFilterMixin
+
+
 Release 0.3
 ----------------
 * added IsSuperUser permission
