@@ -5,7 +5,6 @@ from django.db import ProgrammingError
 from django.db.models import Q
 from django.http import QueryDict
 from rest_framework import exceptions
-from rest_framework.generics import ListAPIView
 
 
 class MultiSerializerViewSetMixin(object):
@@ -141,7 +140,7 @@ class SafeTenantViewSetMixin(object):
             raise
 
 
-class QueryStringFilterAPIView(ListAPIView):
+class QueryStringFilterMixin(object):
     """Mixin which allow to filter and search based on querystring filters"""
     search_param = 'search'
     filters = ()
