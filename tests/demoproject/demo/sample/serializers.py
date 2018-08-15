@@ -34,6 +34,14 @@ class ImageFileTypeSerializer(serializers.ModelSerializer):
         fields = ("file_type",)
 
 
+class ImageFileTypeChoiceSerializer(serializers.ModelSerializer):
+    file_type = serializers.ChoiceField(choices=[(1, "First"), (2, "Second")])
+
+    class Meta:
+        model = Image
+        fields = ("file_type",)
+
+
 class ImageSerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
     class Meta(WritableNestedChildSerializerMixin.Meta):
         model = Image
@@ -44,6 +52,12 @@ class ReviewSerializer(WritableNestedChildSerializerMixin, serializers.ModelSeri
     class Meta(WritableNestedChildSerializerMixin.Meta):
         model = Review
         fields = ("id", "user", "rating",)
+
+
+class ReviewMetaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ("id", "user", "rating", "status",)
 
 
 class BookSerializer(
@@ -70,6 +84,12 @@ class AuthorSerializer(WritableNestedParentSerializerMixin, serializers.ModelSer
         export_attr="rating"
     )
 
+    class Meta:
+        model = Author
+        fields = "__all__"
+
+
+class AuthorMetaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = "__all__"

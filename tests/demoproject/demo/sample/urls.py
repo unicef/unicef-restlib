@@ -14,6 +14,26 @@ urlpatterns = [
         views.AuthorPaginateView.as_view(),
         name='authors-paginate'
     ),
+    url(
+        r'^authors/meta/cru/$',
+        views.AuthorMetaCRUView.as_view(),
+        name='authors-meta-cru'
+    ),
+    url(
+        r'^authors/meta/fsm/$',
+        views.AuthorMetaFSMListView.as_view(),
+        name='authors-meta-fsm-list'
+    ),
+    url(
+        r'^authors/meta/fsm/(?P<pk>\d+)/$',
+        views.AuthorMetaFSMView.as_view(),
+        name='authors-meta-fsm'
+    ),
+    url(
+        r'^reviews/meta/fsm/(?P<pk>\d+)/$',
+        views.ReviewMetaFSMView.as_view(),
+        name='review-meta-fsm'
+    ),
     url(r'^list', view=views.AuthorView.as_view(), name='list'),
 ]
 
