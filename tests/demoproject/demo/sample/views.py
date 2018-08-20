@@ -34,7 +34,7 @@ class BookNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         return {"author__active": True}
 
     def perform_create(self, serializer, **kwargs):
-        parent = self.get_parent_object()
+        self.get_parent_object()
         serializer.save()
 
 
