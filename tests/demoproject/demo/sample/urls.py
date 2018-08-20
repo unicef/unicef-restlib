@@ -1,5 +1,5 @@
 from demo.sample import views
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 from rest_framework import routers
 
 from unicef_restlib.routers import NestedComplexRouter

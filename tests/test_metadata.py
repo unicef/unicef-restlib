@@ -1,11 +1,6 @@
 import pytest
 from demo.sample.metadata import ImageFileTypeMetadata, ReadOnlyChoiceMetadata, SeparateReadWriteMetadata
-from demo.sample.serializers import (
-    AuthorSerializer,
-    BookSeparatedSerializer,
-    ImageFileTypeChoiceSerializer,
-    ImageFileTypeSerializer,
-)
+from demo.sample.serializers import BookSeparatedSerializer, ImageFileTypeChoiceSerializer, ImageFileTypeSerializer
 from django.urls import reverse
 from tests.factories import FileTypeFactory
 

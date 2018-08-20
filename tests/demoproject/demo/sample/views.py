@@ -2,7 +2,7 @@ from demo.sample import serializers
 from demo.sample.metadata import CRUMetadata, FSMMetadata
 from demo.sample.models import Author, Book, Review
 from rest_framework import viewsets
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 
 from unicef_restlib.pagination import DynamicPageNumberPagination
 from unicef_restlib.permissions import IsSuperUser
