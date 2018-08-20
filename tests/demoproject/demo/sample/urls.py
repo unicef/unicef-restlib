@@ -9,6 +9,11 @@ app_name = 'sample'
 router = routers.SimpleRouter()
 router.register(r'authors', views.AuthorViewSet)
 router.register(r'books', views.BookViewSet)
+router.register(
+    r'book-nested',
+    views.BookNestedViewSet,
+    base_name="book-nested",
+)
 
 nested = NestedComplexRouter(router, r'authors', lookup='author')
 nested.register(r'books', views.BookViewSet, base_name='author-books')

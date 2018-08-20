@@ -9,7 +9,7 @@ from unicef_restlib.permissions import IsSuperUser
 from unicef_restlib.views import NestedViewSetMixin, QueryStringFilterMixin
 
 
-class AuthorViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = serializers.AuthorSerializer
 
@@ -20,13 +20,22 @@ class AuthorPaginateView(ListAPIView):
     pagination_class = DynamicPageNumberPagination
 
 
-class BookViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    parent = Author
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = serializers.BookSerializer
+
+
+class BookNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    parent = AuthorViewSet
     queryset = Book.objects.all()
     serializer_class = serializers.BookSerializer
 
     def get_parent_filter(self):
         return {"author__active": True}
+
+    def perform_create(self, serializer, **kwargs):
+        parent = self.get_parent_object()
+        serializer.save()
 
 
 class AuthorView(QueryStringFilterMixin, ListAPIView):
