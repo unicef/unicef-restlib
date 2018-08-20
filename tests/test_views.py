@@ -61,3 +61,9 @@ def test_query_string_api_view(query_string, results_len):
     results = client.get(url, format='json').json()
 
     assert len(results) == results_len
+
+
+def test_nested_url(client, author, book):
+    url = "{}{}/books/".format(reverse("sample:author-list"), author.pk)
+    response = client.get(url)
+    assert response.status_code == 200

@@ -1,12 +1,17 @@
 from demo.sample import views
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework import routers
+
+from unicef_restlib.routers import NestedComplexRouter
 
 app_name = 'sample'
 
-router = routers.DefaultRouter()
-router.register(r'authors/', views.AuthorViewSet)
-router.register(r'books/', views.BookViewSet)
+router = routers.SimpleRouter()
+router.register(r'authors', views.AuthorViewSet)
+router.register(r'books', views.BookViewSet)
+
+nested = NestedComplexRouter(router, r'authors', lookup='author')
+nested.register(r'books', views.BookViewSet, base_name='author-books')
 
 urlpatterns = [
     url(
@@ -35,6 +40,6 @@ urlpatterns = [
         name='review-meta-fsm'
     ),
     url(r'^list', view=views.AuthorView.as_view(), name='list'),
+    url(r'^', include(nested.urls)),
+    url(r'^', include(router.urls)),
 ]
-
-urlpatterns += router.urls
