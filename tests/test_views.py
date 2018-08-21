@@ -26,7 +26,7 @@ def test_view_get_no_parent(client, author):
 def test_view_filter(client, book, author):
     assert author.active
     response = client.get("{}?auditor__pk={}".format(
-        reverse("sample:book-nested-list"),
+        reverse("sample:book-filter-nested-list"),
         author.pk,
     ))
     assert response.status_code == 200
@@ -40,18 +40,58 @@ def test_view_filter_invalid(client, book, author):
     author.save()
     assert not author.active
     response = client.get("{}?auditor__pk={}".format(
-        reverse("sample:book-nested-list"),
+        reverse("sample:book-filter-nested-list"),
         author.pk,
     ))
     assert response.status_code == 200
     assert len(response.json()) == 0
 
 
-def test_nested_view_get_parent_object(client):
+def test_view_filter_no_parent_filter(client, book, author):
+    assert author.active
+    response = client.get(
+        reverse("sample:book-nested-list", args=[author.pk]),
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["id"] == book.pk
+    assert data[0]["author"] == author.pk
+
+
+def test_view_filter_no_parent_filter_not_found(client, book):
+    response = client.get(
+        reverse("sample:book-nested-list", args=[404]),
+    )
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_safe_tenant(client, author):
+    response = client.get(reverse("sample:author-safe-list"))
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+
+def test_nested_view_get_parent_object_none(client, author):
     book_qs = Book.objects
     book_count = book_qs.count()
     response = client.post(
-        reverse("sample:book-nested-list"),
+        reverse("sample:book-nested-list", args=[404]),
+        data={
+            "name": "Scary Tales",
+            "sku_number": "123",
+            "genre": "scifi",
+        },
+    )
+    assert response.status_code == 404
+
+
+def test_nested_view_get_parent_object(client, author):
+    book_qs = Book.objects
+    book_count = book_qs.count()
+    response = client.post(
+        reverse("sample:book-nested-list", args=[author.pk]),
         data={
             "name": "Scary Tales",
             "sku_number": "123",
@@ -61,6 +101,25 @@ def test_nested_view_get_parent_object(client):
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == "Scary Tales"
+    assert data["author"] == author.pk
+    assert book_qs.count() == book_count + 1
+
+
+def test_nested_view_get_root_object(client, author):
+    book_qs = Book.objects
+    book_count = book_qs.count()
+    response = client.post(
+        reverse("sample:book-root-nested-list", args=[author.pk]),
+        data={
+            "name": "Scary Tales",
+            "sku_number": "123",
+            "genre": "scifi",
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["name"] == "Scary Tales"
+    assert data["author"] == author.pk
     assert book_qs.count() == book_count + 1
 
 

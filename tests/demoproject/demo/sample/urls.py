@@ -8,11 +8,26 @@ app_name = 'sample'
 
 router = routers.SimpleRouter()
 router.register(r'authors', views.AuthorViewSet)
+router.register(
+    r'authors-safe',
+    views.AuthorSafeTenantViewSet,
+    base_name='author-safe',
+)
 router.register(r'books', views.BookViewSet)
 router.register(
-    r'book-nested',
+    r'book-filter-nested',
+    views.BookFilterNestedViewSet,
+    base_name="book-filter-nested",
+)
+router.register(
+    r'book-nested/(?P<author_pk>\d+)/',
     views.BookNestedViewSet,
     base_name="book-nested",
+)
+router.register(
+    r'book-root-nested/(?P<author_pk>\d+)/',
+    views.BookRootNestedViewSet,
+    base_name="book-root-nested",
 )
 
 nested = NestedComplexRouter(router, r'authors', lookup='author')

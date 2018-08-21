@@ -6,10 +6,20 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 
 from unicef_restlib.pagination import DynamicPageNumberPagination
 from unicef_restlib.permissions import IsSuperUser
-from unicef_restlib.views import NestedViewSetMixin, QueryStringFilterMixin
+from unicef_restlib.views import (
+    MultiSerializerViewSetMixin,
+    NestedViewSetMixin,
+    QueryStringFilterMixin,
+    SafeTenantViewSetMixin,
+)
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
+    queryset = Author.objects.all()
+    serializer_class = serializers.AuthorSerializer
+
+
+class AuthorSafeTenantViewSet(SafeTenantViewSetMixin, viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = serializers.AuthorSerializer
 
@@ -25,7 +35,7 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.BookSerializer
 
 
-class BookNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+class BookFilterNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     parent = AuthorViewSet
     queryset = Book.objects.all()
     serializer_class = serializers.BookSerializer
@@ -33,9 +43,29 @@ class BookNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     def get_parent_filter(self):
         return {"author__active": True}
 
+
+class BookNestedViewSet(MultiSerializerViewSetMixin, NestedViewSetMixin, viewsets.ModelViewSet):
+    parent = AuthorViewSet
+    parent_lookup_field = "author"
+    parent_lookup_kwarg = "author_pk"
+    queryset = Book.objects.all()
+    serializer_class = serializers.BookSerializer
+
     def perform_create(self, serializer, **kwargs):
-        self.get_parent_object()
-        serializer.save()
+        parent = self.get_parent_object()
+        serializer.save(author=parent)
+
+
+class BookRootNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    parent = AuthorViewSet
+    parent_lookup_field = "author"
+    parent_lookup_kwarg = "author_pk"
+    queryset = Book.objects.all()
+    serializer_class = serializers.BookSerializer
+
+    def perform_create(self, serializer, **kwargs):
+        root = self.get_root_object()
+        serializer.save(author=root)
 
 
 class AuthorView(QueryStringFilterMixin, ListAPIView):
