@@ -1,8 +1,6 @@
 import pytest
 from demo.sample.models import Book
 from django.urls import reverse
-from rest_framework.test import APIClient
-from tests.factories import AuthorFactory, UserFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -74,8 +72,6 @@ def test_safe_tenant(client, author):
 
 
 def test_nested_view_get_parent_object_none(client, author):
-    book_qs = Book.objects
-    book_count = book_qs.count()
     response = client.post(
         reverse("sample:book-nested-list", args=[404]),
         data={
@@ -123,17 +119,41 @@ def test_nested_view_get_root_object(client, author):
     assert book_qs.count() == book_count + 1
 
 
-@pytest.mark.parametrize("query_string, results_len ", [('', 2), ('?first_name=demo', 1), ('?search=de', 1)])
-def test_query_string_api_view(query_string, results_len):
-    user = UserFactory(is_superuser=True)
-    AuthorFactory(first_name='demo')
-    AuthorFactory(first_name='test')
+def test_nested_view_get_root_object_no_parent(client, author):
+    book_qs = Book.objects
+    book_count = book_qs.count()
+    response = client.post(
+        reverse("sample:book-no-parent-nested-list", args=[author.pk]),
+        data={
+            "name": "Scary Tales",
+            "sku_number": "123",
+            "genre": "scifi",
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["name"] == "Scary Tales"
+    assert data["author"] == None
+    assert book_qs.count() == book_count + 1
 
-    client = APIClient()
-    client.force_authenticate(user=user)
+
+@pytest.mark.parametrize(
+    "query_string, results_len ",
+    [
+        ('', 2),
+        ('?first_name=demo', 1),
+        ('?search=de', 1),
+        ('?first_name__in=test,demo', 2),
+    ]
+)
+def test_query_string_api_view(api_client, superuser, query_string, results_len, authors):
+    authors.get(first_name="demo")
+    authors.get(first_name="test")
+
+    api_client.force_authenticate(user=superuser)
 
     url = reverse('sample:list') + query_string
-    results = client.get(url, format='json').json()
+    results = api_client.get(url, format='json').json()
 
     assert len(results) == results_len
 

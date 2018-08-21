@@ -29,6 +29,11 @@ router.register(
     views.BookRootNestedViewSet,
     base_name="book-root-nested",
 )
+router.register(
+    r'book-no-parent-nested/(?P<author_pk>\d+)/',
+    views.BookNoParentNestedViewSet,
+    base_name="book-no-parent-nested",
+)
 
 nested = NestedComplexRouter(router, r'authors', lookup='author')
 nested.register(r'books', views.BookViewSet, base_name='author-books')

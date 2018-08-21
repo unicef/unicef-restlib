@@ -68,12 +68,23 @@ class BookRootNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         serializer.save(author=root)
 
 
+class BookNoParentNestedViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = serializers.BookSerializer
+
+    def perform_create(self, serializer, **kwargs):
+        parent = self.get_parent_object()
+        if parent is None:
+            parent = self.get_root_object()
+        serializer.save(author=parent)
+
+
 class AuthorView(QueryStringFilterMixin, ListAPIView):
     queryset = Author.objects.all()
     serializer_class = serializers.AuthorSerializer
     permission_classes = (IsSuperUser,)
     filters = (
-        ('first_name', 'first_name'),
+        ('first_name', 'first_name__in'),
     )
     search_terms = ('first_name__istartswith',)
 
