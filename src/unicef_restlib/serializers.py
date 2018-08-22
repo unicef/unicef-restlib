@@ -315,7 +315,7 @@ class WritableNestedParentSerializerMixin(object):
                 isinstance(related_descriptor.field, related.OneToOneField)):
             return related_descriptor.field, 'reverse'
 
-        assert False, "We doen't support many to many relation and forward many to one " \
+        assert False, "We don't support many to many relation and forward many to one " \
                       "because updating this relation have side effect."
 
     def _get_related_data(self, instance, nested_serializer):
