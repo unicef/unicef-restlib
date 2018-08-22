@@ -133,7 +133,7 @@ def test_nested_view_get_root_object_no_parent(client, author):
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == "Scary Tales"
-    assert data["author"] == None
+    assert data["author"] is None
     assert book_qs.count() == book_count + 1
 
 
