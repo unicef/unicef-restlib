@@ -32,7 +32,16 @@ def test_separated_read_write_field_metadata(rf):
 
 
 def test_cru_actions_metadata(client):
-    response = client.options(reverse("sample:authors-meta-cru"))
+    response = client.options(reverse("sample:authors-meta-cru-list"))
+    assert response.status_code == 200
+    data = response.json()
+    assert list(data["actions"].keys()) == ["GET"]
+
+
+def test_cru_actions_metadata_permission(client, author):
+    response = client.options(
+        reverse("sample:authors-meta-cru", args=[author.pk])
+    )
     assert response.status_code == 200
     data = response.json()
     assert list(data["actions"].keys()) == ["GET"]

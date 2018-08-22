@@ -19,6 +19,7 @@ pytest-cov = "*"
 pytest-django = "*"
 pytest-echo = "*"
 pytest-pythonpath = "*"
+django-fsm = "*"
 
 [requires]
 python_version = "3.6"

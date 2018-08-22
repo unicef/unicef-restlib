@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_fsm',
+
     'demo.sample',
     'unicef_djangolib',
     'unicef_restlib',

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django_fsm import FSMField, transition
 from model_utils import Choices
 from unicef_djangolib.fields import CodedGenericRelation
 
@@ -85,10 +86,14 @@ class Review(models.Model):
     )
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     rating = models.IntegerField()
-    status = models.CharField(max_length=20)
+    status = FSMField(default="new")
 
     class Meta:
         unique_together = [["author", "user"]]
+
+    @transition(field=status, source="new", target="published")
+    def published(self):
+        pass
 
 
 class Category(models.Model):

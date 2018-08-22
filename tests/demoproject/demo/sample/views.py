@@ -89,10 +89,17 @@ class AuthorView(QueryStringFilterMixin, ListAPIView):
     search_terms = ('first_name__istartswith',)
 
 
-class AuthorMetaCRUView(ListAPIView):
+class AuthorMetaCRUListView(ListAPIView):
     queryset = Author.objects.all()
     serializer_class = serializers.AuthorMetaSerializer
     metadata_class = CRUMetadata
+
+
+class AuthorMetaCRUView(RetrieveUpdateAPIView):
+    queryset = Author.objects.all()
+    serializer_class = serializers.AuthorMetaSerializer
+    metadata_class = CRUMetadata
+    permission_classes = (IsSuperUser,)
 
 
 class AuthorMetaFSMListView(ListAPIView):

@@ -46,7 +46,12 @@ urlpatterns = [
     ),
     url(
         r'^authors/meta/cru/$',
-        views.AuthorMetaCRUView.as_view(),
+        views.AuthorMetaCRUListView.as_view(),
+        name='authors-meta-cru-list'
+    ),
+    url(
+        r'^authors/meta/cru/(?P<pk>\d+)/$',
+        views.AuthorMetaCRUListView.as_view(),
         name='authors-meta-cru'
     ),
     url(
