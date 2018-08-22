@@ -96,8 +96,14 @@ class Review(models.Model):
         pass
 
 
-class Category(models.Model):
+class CategoryAbstract(models.Model):
     name = models.CharField(max_length=50)
+
+    class Meta:
+        abstract = True
+
+
+class Category(CategoryAbstract):
     parent = parent = models.ForeignKey(
         'self',
         null=True,

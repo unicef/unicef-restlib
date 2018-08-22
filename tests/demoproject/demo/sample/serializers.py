@@ -1,5 +1,5 @@
 from demo.sample.fields import FileTypeModelChoiceField
-from demo.sample.models import Activity, Author, Book, Category, FileType, Image, ISBN, Review
+from demo.sample.models import Activity, Author, Book, Category, CategoryAbstract, FileType, Image, ISBN, Review
 from rest_framework import serializers
 
 from unicef_restlib.fields import (
@@ -12,6 +12,7 @@ from unicef_restlib.serializers import (
     DeletableSerializerMixin,
     PKSerializerMixin,
     RecursiveListSerializer,
+    UserContextSerializerMixin,
     WritableNestedChildSerializerMixin,
     WritableNestedParentSerializerMixin,
     WritableNestedSerializerMixin,
@@ -50,6 +51,12 @@ class ImageSerializer(WritableNestedChildSerializerMixin, serializers.ModelSeria
 
 class ReviewSerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
     class Meta(WritableNestedChildSerializerMixin.Meta):
+        model = Review
+        fields = ("id", "user", "rating",)
+
+
+class ReviewUserSerializer(UserContextSerializerMixin, serializers.ModelSerializer):
+    class Meta:
         model = Review
         fields = ("id", "user", "rating",)
 
@@ -140,6 +147,22 @@ class ISBNForwardSerializer(WritableNestedParentSerializerMixin, serializers.Mod
         fields = ("id", "code", "book",)
 
 
+class ReviewAuthorSerializer(WritableNestedParentSerializerMixin, serializers.ModelSerializer):
+    author = AuthorSerializer()
+
+    class Meta:
+        model = Review
+        fields = ("id", "rating", "author")
+
+
+class AuthorReviewsSerializer(WritableNestedParentSerializerMixin, serializers.ModelSerializer):
+    reviews = ReviewMetaSerializer(many=True)
+
+    class Meta:
+        model = Author
+        fields = ("id", "first_name", "last_name", "reviews")
+
+
 class AuthorSeparatedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
@@ -178,3 +201,14 @@ class CategorySerializer(WritableNestedSerializerMixin, serializers.ModelSeriali
     class Meta(WritableNestedSerializerMixin.Meta):
         model = Category
         fields = ("id", "name", "parent", "children",)
+
+
+class CategoryAbstractPKSerializer(PKSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = CategoryAbstract
+
+
+class CategoryMissingPKSerializer(PKSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ("name",)
