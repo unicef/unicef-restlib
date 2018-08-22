@@ -55,6 +55,11 @@ class ReviewSerializer(WritableNestedChildSerializerMixin, serializers.ModelSeri
 
 
 class ReviewMetaSerializer(serializers.ModelSerializer):
+    rating = DynamicChoicesField(
+        choices={1: 1, 2: 2, 3: 3, 4: 4, 5: 5},
+        required=False,
+    )
+
     class Meta:
         model = Review
         fields = ("id", "user", "rating", "status",)
@@ -144,6 +149,7 @@ class AuthorSeparatedSerializer(serializers.ModelSerializer):
 class BookSeparatedSerializer(serializers.ModelSerializer):
     author = SeparatedReadWriteField(
         read_field=AuthorSeparatedSerializer(read_only=True),
+        label="Author",
     )
 
     class Meta:
@@ -155,6 +161,7 @@ class BookSeparatedWriteSerializer(serializers.ModelSerializer):
     author = SeparatedReadWriteField(
         read_field=AuthorSeparatedSerializer(read_only=True),
         write_field=AuthorSeparatedSerializer(),
+        label="Author",
     )
 
     class Meta:
