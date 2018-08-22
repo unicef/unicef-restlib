@@ -1,5 +1,6 @@
 import pytest
 from demo.sample.models import Book
+from django.db import ProgrammingError
 from django.urls import reverse
 
 pytestmark = pytest.mark.django_db
@@ -69,6 +70,12 @@ def test_safe_tenant(client, author):
     response = client.get(reverse("sample:author-safe-list"))
     assert response.status_code == 200
     assert len(response.json()) == 1
+
+
+def test_safe_tenant_error(client, superuser):
+    client.force_login(superuser)
+    with pytest.raises(ProgrammingError):
+        client.get(reverse("sample:author-safe-error-list"))
 
 
 def test_nested_view_get_parent_object_none(client, author):

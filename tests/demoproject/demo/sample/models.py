@@ -78,6 +78,10 @@ class ISBN(models.Model):
     code = models.CharField(max_length=20, unique=True)
 
 
+def status_name(obj):
+    return "Status"
+
+
 class Review(models.Model):
     author = models.ForeignKey(
         Author,
@@ -87,12 +91,27 @@ class Review(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     rating = models.IntegerField()
     status = FSMField(default="new")
+    active = FSMField(default=False)
 
     class Meta:
         unique_together = [["author", "user"]]
 
-    @transition(field=status, source="new", target="published")
+    @transition(
+        field=status,
+        source="new",
+        target="published",
+        custom=dict(name=status_name),
+    )
     def published(self):
+        pass
+
+    @transition(
+        field=active,
+        source=False,
+        target=True,
+        custom=dict(name="Active"),
+    )
+    def is_active(self):
         pass
 
 

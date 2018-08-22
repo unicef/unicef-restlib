@@ -13,6 +13,16 @@ router.register(
     views.AuthorSafeTenantViewSet,
     base_name='author-safe',
 )
+router.register(
+    r'authors-safe-error',
+    views.AuthorSafeTenantErrorViewSet,
+    base_name='author-safe-error',
+)
+router.register(
+    r'authors-cru',
+    views.AuthorMetaCRUViewSet,
+    base_name='author-cru',
+)
 router.register(r'books', views.BookViewSet)
 router.register(
     r'book-filter-nested',
@@ -48,11 +58,6 @@ urlpatterns = [
         r'^authors/meta/cru/$',
         views.AuthorMetaCRUListView.as_view(),
         name='authors-meta-cru-list'
-    ),
-    url(
-        r'^authors/meta/cru/(?P<pk>\d+)/$',
-        views.AuthorMetaCRUListView.as_view(),
-        name='authors-meta-cru'
     ),
     url(
         r'^authors/meta/fsm/$',

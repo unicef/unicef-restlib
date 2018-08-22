@@ -31,6 +31,13 @@ def test_separated_read_write_field_metadata(rf):
     assert "author" in metadata
 
 
+def test_separated_read_write_field_metadata_get(rf):
+    request = rf.get(reverse("sample:author-list"))
+    serializer = BookSeparatedSerializer(context={"request": request})
+    metadata = SeparateReadWriteMetadata().get_serializer_info(serializer)
+    assert "author" in metadata
+
+
 def test_cru_actions_metadata(client):
     response = client.options(reverse("sample:authors-meta-cru-list"))
     assert response.status_code == 200
@@ -38,13 +45,31 @@ def test_cru_actions_metadata(client):
     assert list(data["actions"].keys()) == ["GET"]
 
 
-def test_cru_actions_metadata_permission(client, author):
+def test_cru_actions_metadata_permission(client, superuser):
+    client.force_login(superuser)
+    response = client.options(reverse("sample:author-cru-list"))
+    assert response.status_code == 200
+    data = response.json()
+    assert set(data["actions"].keys()) == set(["GET", "POST"])
+
+
+def test_cru_actions_metadata_get_object(client, superuser, author):
+    client.force_login(superuser)
     response = client.options(
-        reverse("sample:authors-meta-cru", args=[author.pk])
+        reverse("sample:author-cru-detail", args=[author.pk])
     )
     assert response.status_code == 200
     data = response.json()
-    assert list(data["actions"].keys()) == ["GET"]
+    assert set(data["actions"].keys()) == set(["GET", "PUT"])
+
+
+def test_cru_actions_metadata_get_object_not_found(client, superuser, author):
+    client.force_login(superuser)
+    response = client.options(
+        reverse("sample:author-cru-detail", args=[404])
+    )
+    assert response.status_code == 200
+    assert "actions" not in response.json()
 
 
 def test_fsm_transition_actions_metadata_no_actions(client, superuser):

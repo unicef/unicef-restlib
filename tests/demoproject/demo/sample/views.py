@@ -1,6 +1,7 @@
 from demo.sample import serializers
 from demo.sample.metadata import CRUMetadata, FSMMetadata
 from demo.sample.models import Author, Book, Review
+from django.db import ProgrammingError
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 
@@ -17,6 +18,17 @@ from unicef_restlib.views import (
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = serializers.AuthorSerializer
+
+
+class AuthorSafeTenantBase(viewsets.ModelViewSet):
+    def dispatch(self, request, *args, **kwargs):
+        raise ProgrammingError
+
+
+class AuthorSafeTenantErrorViewSet(SafeTenantViewSetMixin, AuthorSafeTenantBase):
+    queryset = Author.objects.all()
+    serializer_class = serializers.AuthorSerializer
+    permission_classes = (IsSuperUser,)
 
 
 class AuthorSafeTenantViewSet(SafeTenantViewSetMixin, viewsets.ModelViewSet):
@@ -95,7 +107,7 @@ class AuthorMetaCRUListView(ListAPIView):
     metadata_class = CRUMetadata
 
 
-class AuthorMetaCRUView(RetrieveUpdateAPIView):
+class AuthorMetaCRUViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = serializers.AuthorMetaSerializer
     metadata_class = CRUMetadata
