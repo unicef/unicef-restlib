@@ -97,6 +97,7 @@ class AuthorView(QueryStringFilterMixin, ListAPIView):
     permission_classes = (IsSuperUser,)
     filters = (
         ('first_name', 'first_name__in'),
+        ('custom', {'best': [('active', True), ('activities__isnull', True)]}),
     )
     search_terms = ('first_name__istartswith',)
 
