@@ -10,15 +10,15 @@ class NestedComplexRouter(routers.NestedSimpleRouter):
     def register(self, prefix, viewset, base_name=None):
         super().register(prefix, viewset, base_name=base_name)
 
+        # this is run in super()
+        # re-running as we need that variables
         parent_registry = [
-            registered for registered in self.parent_router.registry
+            registered for registered
+            in self.parent_router.registry
             if registered[0] == self.parent_prefix
         ]
-        try:
-            parent_registry = parent_registry[0]
-            parent_prefix, parent_viewset, parent_basename = parent_registry
-        except Exception:
-            raise RuntimeError('parent registered resource not found')
+        parent_registry = parent_registry[0]
+        parent_prefix, parent_viewset, parent_basename = parent_registry
 
         viewset.parent = parent_viewset
         viewset.parent_lookup_field = self.nest_prefix[:-1]

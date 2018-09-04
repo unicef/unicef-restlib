@@ -5,10 +5,15 @@ from demo.sample.models import Activity, Author, Book, Category, Image, ISBN, Re
 from demo.sample.serializers import (
     AuthorIDSerializer,
     AuthorPKSerializer,
+    AuthorReviewsSerializer,
     AuthorSerializer,
     BookISBNSerializer,
+    CategoryAbstractPKSerializer,
+    CategoryMissingPKSerializer,
     CategorySerializer,
     ISBNForwardSerializer,
+    ReviewAuthorSerializer,
+    ReviewUserSerializer,
 )
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
@@ -636,3 +641,58 @@ def test_pk_field():
 def test_id_field():
     serializer = AuthorIDSerializer()
     assert serializer.pk_field == serializer.fields['id']
+
+
+def test_pk_abstract():
+    serializer = CategoryAbstractPKSerializer()
+    with pytest.raises(ValueError):
+        serializer.pk_field
+
+
+def test_pk_missing():
+    serializer = CategoryMissingPKSerializer()
+    with pytest.raises(AssertionError):
+        serializer.pk_field
+
+
+# WritableNestedParentSerializerMixin Tests
+
+def test_writable_nested_many_to_one():
+    serializer = ReviewAuthorSerializer(data={
+        "rating": 1,
+        "author": {"first_name": "First", "last_name": "Last"}
+    })
+    serializer.is_valid(raise_exception=True)
+    with pytest.raises(AssertionError):
+        serializer.save()
+
+
+def test_writable_nested_validation_not_implemented(user):
+    serializer = AuthorReviewsSerializer(data={
+        "first_name": "First",
+        "last_name": "Last",
+        "reviews": [{"rating": 1, "user": user.pk}]
+    })
+    serializer.is_valid()
+    with pytest.raises(NotImplementedError):
+        serializer.save()
+
+
+# UserContextSerializerMixin Tests
+
+def test_user_context_from_context_param(user):
+    serializer = ReviewUserSerializer(
+        data={"rating": 1},
+        context={"user": user}
+    )
+    serializer.get_user() == user
+
+
+def test_user_context_from_context_request(rf, user):
+    request = rf.get("sample:author-list")
+    request.user = user
+    serializer = ReviewUserSerializer(
+        data={"rating": 1},
+        context={"request": request}
+    )
+    serializer.get_user() == user

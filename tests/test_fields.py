@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from unittest.mock import Mock, patch
 
 import pytest
 from demo.sample.serializers import (
@@ -7,6 +8,7 @@ from demo.sample.serializers import (
     BookSeparatedWriteSerializer,
     BookSerializer,
     ImageFileTypeSerializer,
+    ReviewMetaSerializer,
 )
 from django.forms.models import model_to_dict
 from tests.factories import FileTypeFactory
@@ -127,7 +129,9 @@ def test_field_building(book):
     field2 = serializer2.fields["author"]
     assert field1.__class__ == field2.__class__
     assert field1._args == field2._args
-    assert field1._kwargs == field2._kwargs
+    assert not field1._kwargs == field2._kwargs
+    assert "label" in field1._kwargs
+    assert "label" not in field2._kwargs
 
 
 def test_comma_separated_export_field(author, reviews):
@@ -136,6 +140,27 @@ def test_comma_separated_export_field(author, reviews):
     serializer = AuthorSerializer(author)
     data = serializer.data
     assert data["review_ratings"] == "1, 2"
+
+
+def test_comma_separated_export_field_skip(author, reviews):
+    reviews.get(author=author, rating=1)
+    reviews.get(author=author, rating=2)
+    mock_smart = Mock(side_effect=KeyError)
+    with patch("unicef_restlib.fields.get_attribute_smart", mock_smart):
+        serializer = AuthorSerializer(author)
+        data = serializer.data
+        assert "review_ratings" not in data
+
+
+def test_comma_separated_export_field_exception(author, reviews):
+    reviews.get(author=author, rating=1)
+    reviews.get(author=author, rating=2)
+    mock_smart = Mock(side_effect=KeyError)
+    with patch("unicef_restlib.fields.get_attribute_smart", mock_smart):
+        serializer = AuthorSerializer(author)
+        serializer.fields["review_ratings"].required = True
+        with pytest.raises(KeyError):
+            serializer.data
 
 
 def test_dynamic_choices_field():
@@ -148,6 +173,18 @@ def test_dynamic_choices_field():
     assert serializer.is_valid()
     data = serializer.data
     assert data["genre"] == "Western"
+
+
+def test_dynamic_choices_field_not_choices(user):
+    serializer = ReviewMetaSerializer(data={
+        "user": user.pk,
+        "rating": 1,
+        "status": "new"
+    })
+
+    assert serializer.is_valid()
+    data = serializer.data
+    assert data["rating"] == 1
 
 
 def test_dynamic_choices_field_invalid():

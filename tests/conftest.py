@@ -30,8 +30,8 @@ def author():
 @pytest.fixture
 def authors():
     class AuthorFactory:
-        def get(self):
-            return factories.AuthorFactory()
+        def get(self, **kwargs):
+            return factories.AuthorFactory(**kwargs)
     return AuthorFactory()
 
 

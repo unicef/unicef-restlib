@@ -1,6 +1,7 @@
 atomicwrites
 attrs
 coverage
+django-fsm
 factory-boy
 faker
 flake8
