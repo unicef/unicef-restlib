@@ -157,7 +157,7 @@ class QueryStringFilterMixin(object):
                     for dict_filter, dict_value in filter_list:
                         queries.append(Q(**{dict_filter: dict_value}))
                 else:
-                    if query_filter.endswith('__in'):
+                    if query_filter.endswith('__in') and value:
                         value = value.split(',')
                     queries.append(Q(**{query_filter: value}))
         return queries
