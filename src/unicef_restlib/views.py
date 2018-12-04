@@ -152,6 +152,8 @@ class QueryStringFilterMixin(object):
         for param_filter, query_filter in filters:
             if param_filter in self.request.query_params:
                 value = self.request.query_params.get(param_filter)
+                if value in ["true", "false"]:
+                    value = True if value == "true" else False
                 if isinstance(query_filter, dict):
                     filter_list = query_filter.get(value, [])
                     for dict_filter, dict_value in filter_list:
