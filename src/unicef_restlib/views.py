@@ -152,9 +152,14 @@ class QueryStringFilterMixin(object):
         for param_filter, query_filter in filters:
             if param_filter in self.request.query_params:
                 value = self.request.query_params.get(param_filter)
-                if query_filter.endswith('__in'):
-                    value = value.split(',')
-                queries.append(Q(**{query_filter: value}))
+                if isinstance(query_filter, dict):
+                    filter_list = query_filter.get(value, [])
+                    for dict_filter, dict_value in filter_list:
+                        queries.append(Q(**{dict_filter: dict_value}))
+                else:
+                    if query_filter.endswith('__in') and value:
+                        value = value.split(',')
+                    queries.append(Q(**{query_filter: value}))
         return queries
 
     def search_params(self, search_terms=None):

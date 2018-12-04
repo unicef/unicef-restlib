@@ -151,10 +151,11 @@ def test_nested_view_get_root_object_no_parent(client, author):
         ('?first_name=demo', 1),
         ('?search=de', 1),
         ('?first_name__in=test,demo', 2),
+        ('?custom=best', 1),
     ]
 )
 def test_query_string_api_view(api_client, superuser, query_string, results_len, authors):
-    authors.get(first_name="demo")
+    authors.get(first_name="demo", active=False)
     authors.get(first_name="test")
 
     api_client.force_authenticate(user=superuser)

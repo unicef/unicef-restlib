@@ -30,8 +30,7 @@ def author():
 @pytest.fixture
 def authors():
     class AuthorFactory:
-        def get(self, first_name=None):
-            kwargs = {"first_name": first_name} if first_name else {}
+        def get(self, **kwargs):
             return factories.AuthorFactory(**kwargs)
     return AuthorFactory()
 
