@@ -1,23 +1,28 @@
+Release 0.3.6
+-------------
+* Clean up deprecated warnings on base_name
+* Allow filtering on boolean to allow "true" and "false"
+
 Release 0.3.5
-----------------
+-------------
 * tweaked to QueryStringFilterMixin
 
 Release 0.3.4
-----------------
+-------------
 * changed to QueryStringFilterMixin
 
 
 Release 0.3
-----------------
+-----------
 * added IsSuperUser permission
 * added QueryStringFilterAPIView
 
 
 Release 0.2
-----------------
+-----------
 * added ModelChoiceField
 
 
 Release 0.1
-----------------
+-----------
 * Initial release
