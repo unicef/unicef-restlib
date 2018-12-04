@@ -11,42 +11,42 @@ router.register(r'authors', views.AuthorViewSet)
 router.register(
     r'authors-safe',
     views.AuthorSafeTenantViewSet,
-    basename='author-safe',
+    base_name='author-safe',
 )
 router.register(
     r'authors-safe-error',
     views.AuthorSafeTenantErrorViewSet,
-    basename='author-safe-error',
+    base_name='author-safe-error',
 )
 router.register(
     r'authors-cru',
     views.AuthorMetaCRUViewSet,
-    basename='author-cru',
+    base_name='author-cru',
 )
 router.register(r'books', views.BookViewSet)
 router.register(
     r'book-filter-nested',
     views.BookFilterNestedViewSet,
-    basename="book-filter-nested",
+    base_name="book-filter-nested",
 )
 router.register(
     r'book-nested/(?P<author_pk>\d+)/',
     views.BookNestedViewSet,
-    basename="book-nested",
+    base_name="book-nested",
 )
 router.register(
     r'book-root-nested/(?P<author_pk>\d+)/',
     views.BookRootNestedViewSet,
-    basename="book-root-nested",
+    base_name="book-root-nested",
 )
 router.register(
     r'book-no-parent-nested/(?P<author_pk>\d+)/',
     views.BookNoParentNestedViewSet,
-    basename="book-no-parent-nested",
+    base_name="book-no-parent-nested",
 )
 
 nested = NestedComplexRouter(router, r'authors', lookup='author')
-nested.register(r'books', views.BookViewSet, basename='author-books')
+nested.register(r'books', views.BookViewSet, base_name='author-books')
 
 urlpatterns = [
     url(
