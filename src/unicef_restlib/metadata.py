@@ -158,8 +158,7 @@ class ModelChoiceFieldMixin(object):
 
     def get_field_info(self, field):
         field_info = super().get_field_info(field)
-        if (not field_info.get('read_only') and
-                isinstance(field, ModelChoiceField) and hasattr(field, 'choices')):
+        if (not field_info.get('read_only') and isinstance(field, ModelChoiceField) and hasattr(field, 'choices')):
             field_info['choices'] = [
                 {
                     'value': choice_value,

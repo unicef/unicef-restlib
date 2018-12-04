@@ -26,7 +26,7 @@ class ModelChoiceField(serializers.PrimaryKeyRelatedField):
         return self._choices
 
     def get_choice(self, obj):
-        raise NotImplemented
+        raise NotImplementedError
 
     def _choices(self):
         return OrderedDict(map(self.get_choice, self.get_queryset()))
@@ -130,12 +130,7 @@ class WriteListSerializeFriendlyRecursiveField(RecursiveField):
     @property
     def proxied(self):
         self._proxied = super().proxied
-        if (
-                self._proxied and
-                not self._proxied.context and
-                self.bind_args[1] and
-                self.bind_args[1].context
-        ):
+        if (self._proxied and not self._proxied.context and self.bind_args[1] and self.bind_args[1].context):
             self._proxied.context = self.bind_args[1].context
         return self._proxied
 

@@ -289,8 +289,7 @@ class WritableNestedParentSerializerMixin(object):
     def writable_nested_serializers(self):
         return [
             field_name for field_name, field in self.fields.items()
-            if isinstance(field, serializers.BaseSerializer) and
-            not field.read_only
+            if isinstance(field, serializers.BaseSerializer) and not field.read_only
         ]
 
     def _get_related_model_field(self, nested_serializer):
@@ -311,8 +310,10 @@ class WritableNestedParentSerializerMixin(object):
             return related_descriptor.related.field, 'forward'
         if isinstance(related_descriptor, related_descriptors.ReverseManyToOneDescriptor):
             return related_descriptor.field, 'forward'
-        if (isinstance(related_descriptor, related_descriptors.ForwardManyToOneDescriptor) and
-                isinstance(related_descriptor.field, related.OneToOneField)):
+        if (isinstance(
+                related_descriptor,
+                related_descriptors.ForwardManyToOneDescriptor
+        ) and isinstance(related_descriptor.field, related.OneToOneField)):
             return related_descriptor.field, 'reverse'
 
         assert False, "We don't support many to many relation and forward many to one " \
