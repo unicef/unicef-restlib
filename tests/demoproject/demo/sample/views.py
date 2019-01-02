@@ -98,6 +98,7 @@ class AuthorView(QueryStringFilterMixin, ListAPIView):
     filters = (
         ('first_name', 'first_name__in'),
         ('active', 'active'),
+        ('name', ['first_name', 'last_name']),
         ('custom', {'best': [('active', True), ('activities__isnull', True)]}),
     )
     search_terms = ('first_name__istartswith',)
