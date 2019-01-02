@@ -158,6 +158,12 @@ class QueryStringFilterMixin(object):
                     filter_list = query_filter.get(value, [])
                     for dict_filter, dict_value in filter_list:
                         queries.append(Q(**{dict_filter: dict_value}))
+                elif isinstance(query_filter, list):
+                    subq = []
+                    for filter in query_filter:
+                        subq.append(Q(**{filter: value}))
+                    expression = functools.reduce(operator.or_, subq)
+                    queries.append(expression)
                 else:
                     if query_filter.endswith('__in') and value:
                         value = value.split(',')
