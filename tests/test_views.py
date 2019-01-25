@@ -3,6 +3,8 @@ from demo.sample.models import Book
 from django.db import ProgrammingError
 from django.urls import reverse
 
+from demo.sample.utils import author_description
+
 pytestmark = pytest.mark.django_db
 
 
@@ -12,6 +14,7 @@ def test_view_get(client, book):
     data = response.json()
     assert len(data) == 1
     assert data[0]["id"] == book.pk
+    assert data[0]["author_description"] == author_description(book.author)
 
 
 def test_view_get_no_parent(client, author):

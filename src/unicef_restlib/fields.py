@@ -197,3 +197,14 @@ class DynamicChoicesField(serializers.ChoiceField):
     def choice_strings_to_values(self, value):
         # no need to do here anything
         return
+
+
+class FunctionRelatedField(serializers.RelatedField):
+
+    def __init__(self, callable_function=None, **kwargs):
+        assert callable_function is not None, 'The `callable_function` argument is required.'
+        self.callable_function = callable_function
+        super().__init__(**kwargs)
+
+    def to_representation(self, obj):
+        return self.callable_function(obj)
