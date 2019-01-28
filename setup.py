@@ -90,6 +90,7 @@ setup(name=NAME,
       classifiers=[
           'Environment :: Web Environment',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Framework :: Django',
           'Intended Audience :: Developers'],
       scripts=[],
