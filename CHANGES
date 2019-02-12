@@ -1,3 +1,7 @@
+Release 0.4
+-------------
+* Added FunctionRelatedField
+
 Release 0.3.8
 -------------
 * QueryStringFilterMixin allow to filter on multiple fields

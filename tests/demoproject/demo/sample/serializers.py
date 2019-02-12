@@ -1,10 +1,12 @@
 from demo.sample.fields import FileTypeModelChoiceField
 from demo.sample.models import Activity, Author, Book, Category, CategoryAbstract, FileType, Image, ISBN, Review
+from demo.sample.utils import author_description
 from rest_framework import serializers
 
 from unicef_restlib.fields import (
     CommaSeparatedExportField,
     DynamicChoicesField,
+    FunctionRelatedField,
     SeparatedReadWriteField,
     WriteListSerializeFriendlyRecursiveField,
 )
@@ -78,10 +80,11 @@ class BookSerializer(
         serializers.ModelSerializer
 ):
     genre = DynamicChoicesField(choices=Book.GENRE_CHOICES, required=False)
+    author_description = FunctionRelatedField(source='author', read_only=True, callable_function=author_description)
 
     class Meta(DeletableSerializerMixin.Meta, WritableNestedChildSerializerMixin.Meta):
         model = Book
-        fields = ("id", "name", "sku_number", "author", "genre",)
+        fields = ("id", "name", "sku_number", "author", "genre", "author_description")
 
 
 class AuthorSerializer(WritableNestedParentSerializerMixin, serializers.ModelSerializer):
