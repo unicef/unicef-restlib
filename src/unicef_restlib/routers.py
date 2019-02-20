@@ -23,7 +23,7 @@ class NestedComplexRouter(routers.NestedSimpleRouter):
         viewset.parent = parent_viewset
         viewset.parent_lookup_field = self.nest_prefix[:-1]
         viewset.parent_lookup_kwarg = self.nest_prefix + getattr(
-            viewset,
+            parent_viewset,
             'lookup_field',
             'pk'
         )
