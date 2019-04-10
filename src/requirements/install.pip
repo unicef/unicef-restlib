@@ -6,5 +6,6 @@ djangorestframework
 drf-nested-routers
 pytz
 six
+sqlparse
 unicef-djangolib
 unicodecsv
