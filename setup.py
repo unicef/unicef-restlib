@@ -43,7 +43,7 @@ def check(cmd, filename):
 
     if existing != declared:
         msg = """Requirements file not updated.
-Run 'make requiremets'
+Run 'make requirements'
 """.format(' '.join(cmd), f)
         raise DistutilsError(msg)
 
