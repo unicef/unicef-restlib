@@ -7,7 +7,7 @@ from django.http import QueryDict
 from rest_framework import exceptions
 
 
-class MultiSerializerViewSetMixin(object):
+class MultiSerializerViewSetMixin:
     serializer_action_classes = {}
 
     def get_serializer_class(self):
@@ -17,7 +17,7 @@ class MultiSerializerViewSetMixin(object):
             return super().get_serializer_class()
 
 
-class NestedViewSetMixin(object):
+class NestedViewSetMixin:
     """Allow viewsets inheritance with correct filtering depending on parents.
     """
 
@@ -130,7 +130,7 @@ class NestedViewSetMixin(object):
         return queryset
 
 
-class SafeTenantViewSetMixin(object):
+class SafeTenantViewSetMixin:
     def dispatch(self, request, *args, **kwargs):
         try:
             return super().dispatch(request, *args, **kwargs)
@@ -140,7 +140,7 @@ class SafeTenantViewSetMixin(object):
             raise
 
 
-class QueryStringFilterMixin(object):
+class QueryStringFilterMixin:
     """Mixin which allow to filter and search based on querystring filters"""
     search_param = 'search'
     filters = ()

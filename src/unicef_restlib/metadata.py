@@ -9,7 +9,7 @@ from rest_framework.request import clone_request
 from unicef_restlib.fields import ModelChoiceField, SeparatedReadWriteField
 
 
-class SeparatedReadWriteFieldMetadata(object):
+class SeparatedReadWriteFieldMetadata:
     """Mixin for providing correct information about SeparatedReadWriteField.
     """
 
@@ -23,7 +23,7 @@ class SeparatedReadWriteFieldMetadata(object):
         return super().get_field_info(field)
 
 
-class FSMTransitionActionMetadataMixin(object):
+class FSMTransitionActionMetadataMixin:
     """
     Return list of available FSM transitions.
     """
@@ -84,7 +84,7 @@ class FSMTransitionActionMetadataMixin(object):
         return actions
 
 
-class CRUActionsMetadataMixin(object):
+class CRUActionsMetadataMixin:
     """Return "GET" with readable fields as allowed method.
     """
 
@@ -134,7 +134,7 @@ class CRUActionsMetadataMixin(object):
         return actions
 
 
-class ReadOnlyFieldWithChoicesMixin(object):
+class ReadOnlyFieldWithChoicesMixin:
     """Return choices for read only fields.
     """
 
@@ -151,7 +151,7 @@ class ReadOnlyFieldWithChoicesMixin(object):
         return field_info
 
 
-class ModelChoiceFieldMixin(object):
+class ModelChoiceFieldMixin:
     """
     Mixin for displaying field choices based on model data.
     """

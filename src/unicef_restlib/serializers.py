@@ -17,7 +17,7 @@ from unicef_djangolib.fields import CodedGenericRelation
 from unicef_restlib.utils import pop_keys
 
 
-class PKSerializerMixin(object):
+class PKSerializerMixin:
     _pk_field = None
 
     @property
@@ -282,7 +282,7 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
         return super().update(instance, validation_data)
 
 
-class WritableNestedParentSerializerMixin(object):
+class WritableNestedParentSerializerMixin:
     """Serializer that allow to create and update nested objects.
     """
     @property
@@ -491,7 +491,7 @@ class WritableNestedSerializerMixin(
         pass
 
 
-class UserContextSerializerMixin(object):
+class UserContextSerializerMixin:
     def get_user(self):
         return self.context.get('user') or self.context.get('request').user
 
@@ -500,4 +500,4 @@ class RecursiveListSerializer(WritableListSerializer):
     def update(self, instance, validated_data):
         if hasattr(self.child, 'proxied'):
             self.child = self.child.proxied
-        return super(RecursiveListSerializer, self).update(instance, validated_data)
+        return super().update(instance, validated_data)
