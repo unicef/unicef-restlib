@@ -1,23 +1,34 @@
+Release 0.5 (in development)
+-------------
+* Added support to python 3.8
+* Removed support to python 3.6
+
+
 Release 0.4
 -------------
 * Added FunctionRelatedField
+
 
 Release 0.3.8
 -------------
 * QueryStringFilterMixin allow to filter on multiple fields
 
+
 Release 0.3.7
 -------------
 * Reverse basename change
+
 
 Release 0.3.6
 -------------
 * Clean up deprecated warnings on base_name
 * Allow filtering on boolean to allow "true" and "false"
 
+
 Release 0.3.5
 -------------
 * tweaked to QueryStringFilterMixin
+
 
 Release 0.3.4
 -------------
