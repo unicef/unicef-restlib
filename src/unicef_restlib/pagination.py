@@ -1,7 +1,7 @@
 from rest_framework.pagination import PageNumberPagination
 
 
-class OptionalPaginationMixin(object):
+class OptionalPaginationMixin:
     def get_page_size(self, request):
         if self.page_size_query_param:
             try:

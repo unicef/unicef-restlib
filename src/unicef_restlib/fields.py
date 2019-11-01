@@ -37,7 +37,7 @@ class SeparatedReadWriteField(Field):
     write_field = None
 
     def __init__(self, read_field, write_field=builtin_field, *args, **kwargs):
-        super(SeparatedReadWriteField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.read_field = read_field
         self.write_field = write_field
@@ -117,7 +117,7 @@ class SeparatedReadWriteField(Field):
         return field_class(**field_kwargs)
 
     def bind(self, field_name, parent):
-        super(SeparatedReadWriteField, self).bind(field_name, parent)
+        super().bind(field_name, parent)
 
         self.read_field.bind(field_name, parent)
 
@@ -140,7 +140,7 @@ class CommaSeparatedExportField(serializers.Field):
 
     def __init__(self, *args, **kwargs):
         self.export_attr = kwargs.pop('export_attr', None)
-        super(CommaSeparatedExportField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_attribute(self, instance):
         try:
@@ -175,7 +175,7 @@ class CommaSeparatedExportField(serializers.Field):
 class DynamicChoicesField(serializers.ChoiceField):
     def __init__(self, *args, **kwargs):
         self._current_choices = {}
-        super(DynamicChoicesField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def choices(self):

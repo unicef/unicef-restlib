@@ -7,8 +7,8 @@ class NestedComplexRouter(routers.NestedSimpleRouter):
     instead FieldError will be raised on queryset filtering.
     """
 
-    def register(self, prefix, viewset, base_name=None):
-        super().register(prefix, viewset, base_name=base_name)
+    def register(self, prefix, viewset, basename=None):
+        super().register(prefix, viewset, basename=basename)
 
         # this is run in super()
         # re-running as we need that variables
@@ -23,7 +23,7 @@ class NestedComplexRouter(routers.NestedSimpleRouter):
         viewset.parent = parent_viewset
         viewset.parent_lookup_field = self.nest_prefix[:-1]
         viewset.parent_lookup_kwarg = self.nest_prefix + getattr(
-            viewset,
+            parent_viewset,
             'lookup_field',
             'pk'
         )
