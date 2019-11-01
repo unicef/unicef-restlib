@@ -1,8 +1,9 @@
-Release 0.5 (in development)
+Release 0.5
 -------------
 * Added support to python 3.8
 * Removed support to python 3.6
-
+* Added support to django 2.2
+* Fixed NestedComplexRouter parent lookup
 
 Release 0.4
 -------------
