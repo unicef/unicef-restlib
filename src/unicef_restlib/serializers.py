@@ -247,7 +247,9 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
                     validator.instance = instance
 
                 try:
-                    validator(value)
+                    validator(value, field)
+                except TypeError:
+                    raise Exception("Need to upgrade DRF to >= 3.11")
                 except serializers.ValidationError as exc:
                     errors[field.field_name] = exc.detail
 

@@ -1,8 +1,14 @@
+Release 0.6
+-----------
+* Added support for DRF 3.11, dropped support for older versions
+
 Release 0.5
 -------------
 * Added support to python 3.8
 * Removed support to python 3.6
 * Added support to django 2.2
+* Added support to django 3.0
+* Removed support to django 2.1
 * Fixed NestedComplexRouter parent lookup
 
 Release 0.4
