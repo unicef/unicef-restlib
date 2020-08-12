@@ -1,8 +1,11 @@
+from django.urls import reverse
+
 import pytest
+
+from tests.factories import FileTypeFactory
+
 from demo.sample.metadata import ImageFileTypeMetadata, ReadOnlyChoiceMetadata, SeparateReadWriteMetadata
 from demo.sample.serializers import BookSeparatedSerializer, ImageFileTypeChoiceSerializer, ImageFileTypeSerializer
-from django.urls import reverse
-from tests.factories import FileTypeFactory
 
 pytestmark = pytest.mark.django_db
 

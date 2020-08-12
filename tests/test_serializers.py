@@ -1,6 +1,9 @@
-from unittest.mock import Mock
+from django.contrib.contenttypes.models import ContentType
+from rest_framework import serializers
 
 import pytest
+from unittest.mock import Mock
+
 from demo.sample.models import Activity, Author, Book, Category, Image, ISBN, Review
 from demo.sample.serializers import (
     AuthorIDSerializer,
@@ -15,8 +18,6 @@ from demo.sample.serializers import (
     ReviewAuthorSerializer,
     ReviewUserSerializer,
 )
-from django.contrib.contenttypes.models import ContentType
-from rest_framework import serializers
 
 pytestmark = pytest.mark.django_db
 

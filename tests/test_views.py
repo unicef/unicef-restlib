@@ -1,8 +1,10 @@
-import pytest
-from demo.sample.models import Book
-from demo.sample.utils import author_description
 from django.db import ProgrammingError
 from django.urls import reverse
+
+import pytest
+
+from demo.sample.models import Book
+from demo.sample.utils import author_description
 
 pytestmark = pytest.mark.django_db
 
