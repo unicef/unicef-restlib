@@ -1,6 +1,3 @@
-from demo.sample.fields import FileTypeModelChoiceField
-from demo.sample.models import Activity, Author, Book, Category, CategoryAbstract, FileType, Image, ISBN, Review
-from demo.sample.utils import author_description
 from rest_framework import serializers
 
 from unicef_restlib.fields import (
@@ -19,6 +16,10 @@ from unicef_restlib.serializers import (
     WritableNestedParentSerializerMixin,
     WritableNestedSerializerMixin,
 )
+
+from demo.sample.fields import FileTypeModelChoiceField
+from demo.sample.models import Activity, Author, Book, Category, CategoryAbstract, FileType, Image, ISBN, Review
+from demo.sample.utils import author_description
 
 
 class ActivitySerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
