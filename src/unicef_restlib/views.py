@@ -167,6 +167,9 @@ class QueryStringFilterMixin:
                 else:
                     if query_filter.endswith('__in') and value:
                         value = value.split(',')
+                    elif query_filter.endswith('__isnullnot'):
+                        query_filter = query_filter[:-3]
+                        value = not value
                     queries.append(Q(**{query_filter: value}))
         return queries
 
