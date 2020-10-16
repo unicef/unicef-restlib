@@ -1,8 +1,10 @@
-import pytest
-from demo.sample.models import Book
-from demo.sample.utils import author_description
 from django.db import ProgrammingError
 from django.urls import reverse
+
+import pytest
+
+from demo.sample.models import Book
+from demo.sample.utils import author_description
 
 pytestmark = pytest.mark.django_db
 
@@ -75,6 +77,23 @@ def test_view_filter_no_parent_filter_not_found(client, book):
     )
     assert response.status_code == 200
     assert response.json() == []
+
+
+def test_view_filter_isnull(client, book, author, superuser):
+    client.force_login(superuser)
+    assert author.first_name
+    response = client.get("{}?first_name_exists=true".format(
+        reverse("sample:list"),
+    ))
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+    # get opposite
+    response = client.get("{}?first_name_exists=false".format(
+        reverse("sample:list"),
+    ))
+    assert response.status_code == 200
+    assert len(response.json()) == 0
 
 
 def test_safe_tenant(client, author):

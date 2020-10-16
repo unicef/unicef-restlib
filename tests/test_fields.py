@@ -1,7 +1,12 @@
 from collections import OrderedDict
-from unittest.mock import Mock, patch
+
+from django.forms.models import model_to_dict
 
 import pytest
+from unittest.mock import Mock, patch
+
+from tests.factories import FileTypeFactory
+
 from demo.sample.serializers import (
     AuthorSerializer,
     BookSeparatedSerializer,
@@ -10,8 +15,6 @@ from demo.sample.serializers import (
     ImageFileTypeSerializer,
     ReviewMetaSerializer,
 )
-from django.forms.models import model_to_dict
-from tests.factories import FileTypeFactory
 
 pytestmark = pytest.mark.django_db
 

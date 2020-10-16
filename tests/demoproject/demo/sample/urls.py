@@ -1,8 +1,9 @@
-from demo.sample import views
 from django.conf.urls import include, url
 from rest_framework import routers
 
 from unicef_restlib.routers import NestedComplexRouter
+
+from demo.sample import views
 
 app_name = 'sample'
 

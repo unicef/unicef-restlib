@@ -1,6 +1,3 @@
-from demo.sample import serializers
-from demo.sample.metadata import CRUMetadata, FSMMetadata
-from demo.sample.models import Author, Book, Review
 from django.db import ProgrammingError
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
@@ -13,6 +10,10 @@ from unicef_restlib.views import (
     QueryStringFilterMixin,
     SafeTenantViewSetMixin,
 )
+
+from demo.sample import serializers
+from demo.sample.metadata import CRUMetadata, FSMMetadata
+from demo.sample.models import Author, Book, Review
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -100,6 +101,7 @@ class AuthorView(QueryStringFilterMixin, ListAPIView):
         ('active', 'active'),
         ('name', ['first_name', 'last_name']),
         ('custom', {'best': [('active', True), ('activities__isnull', True)]}),
+        ('first_name_exists', 'first_name__isnotnull'),
     )
     search_terms = ('first_name__istartswith',)
 

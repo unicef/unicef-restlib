@@ -1,6 +1,8 @@
-import pytest
-from demo.sample.models import Author
 from django.urls import reverse
+
+import pytest
+
+from demo.sample.models import Author
 
 pytestmark = pytest.mark.django_db
 
