@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, re_path
 from rest_framework import routers
 
 from unicef_restlib.routers import NestedComplexRouter
@@ -50,32 +50,32 @@ nested = NestedComplexRouter(router, r'authors', lookup='author')
 nested.register(r'books', views.BookViewSet, basename='author-books')
 
 urlpatterns = [
-    url(
+    re_path(
         r'^authors/paginate/$',
         views.AuthorPaginateView.as_view(),
         name='authors-paginate'
     ),
-    url(
+    re_path(
         r'^authors/meta/cru/$',
         views.AuthorMetaCRUListView.as_view(),
         name='authors-meta-cru-list'
     ),
-    url(
+    re_path(
         r'^authors/meta/fsm/$',
         views.AuthorMetaFSMListView.as_view(),
         name='authors-meta-fsm-list'
     ),
-    url(
+    re_path(
         r'^authors/meta/fsm/(?P<pk>\d+)/$',
         views.AuthorMetaFSMView.as_view(),
         name='authors-meta-fsm'
     ),
-    url(
+    re_path(
         r'^reviews/meta/fsm/(?P<pk>\d+)/$',
         views.ReviewMetaFSMView.as_view(),
         name='review-meta-fsm'
     ),
-    url(r'^list', view=views.AuthorView.as_view(), name='list'),
-    url(r'^', include(nested.urls)),
-    url(r'^', include(router.urls)),
+    re_path(r'^list', view=views.AuthorView.as_view(), name='list'),
+    re_path(r'^', include(nested.urls)),
+    re_path(r'^', include(router.urls)),
 ]
