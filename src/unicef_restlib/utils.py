@@ -1,4 +1,4 @@
-from collections import Iterable, Mapping
+from collections.abc import Iterable, Mapping
 from itertools import chain
 
 from django.db.models import Manager, QuerySet
