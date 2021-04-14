@@ -1,5 +1,5 @@
-Release 0.7 (in development)
--------------
+Release 0.7
+-----------
 * Added support to python 3.9
 * Added support to django 3.2
 * Querystring: Added support to multiple or dict values
