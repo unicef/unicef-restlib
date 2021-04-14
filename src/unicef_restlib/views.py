@@ -154,16 +154,17 @@ class QueryStringFilterMixin:
                 value = self.request.query_params.get(param_filter)
                 if value in ["true", "false"]:
                     value = True if value == "true" else False
+                or_queries = []
                 if isinstance(query_filter, dict):
-                    filter_list = query_filter.get(value, [])
-                    for dict_filter, dict_value in filter_list:
-                        queries.append(Q(**{dict_filter: dict_value}))
+                    values = value.split(',')
+                    for value in values:
+                        filter_list = query_filter.get(value, [])
+                        subqueries = [Q(**{dict_filter: dict_value}) for dict_filter, dict_value in filter_list]
+                        or_queries.append(functools.reduce(operator.and_, subqueries))
+                    queries.append(functools.reduce(operator.or_, or_queries))
                 elif isinstance(query_filter, list):
-                    subq = []
-                    for filter in query_filter:
-                        subq.append(Q(**{filter: value}))
-                    expression = functools.reduce(operator.or_, subq)
-                    queries.append(expression)
+                    subq = [Q(**{filter: value}) for filter in query_filter]
+                    queries.append(functools.reduce(operator.or_, subq))
                 else:
                     if query_filter.endswith('__in') and value:
                         value = value.split(',')
