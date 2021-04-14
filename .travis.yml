@@ -5,14 +5,19 @@ sudo: false
 python:
   - 3.7
   - 3.8
+  - 3.9
 
 env:
   - DJANGO=2.2
   - DJANGO=3.0
   - DJANGO=3.1
+  - DJANGO=3.2
+
+services:
+  - postgresql
 
 addons:
-  postgresql: "9.6"
+  postgresql: '12'
 
 install:
   - pip install tox codecov
