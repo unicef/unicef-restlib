@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+
 from django_fsm import FSMField, transition
 from model_utils import Choices
 from unicef_djangolib.fields import CodedGenericRelation
