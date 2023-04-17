@@ -30,7 +30,7 @@ def get_attribute_smart(instance, attrs):
         return instance
 
     if isinstance(attrs, str):
-        attrs = attrs.split('.')
+        attrs = attrs.split(".")
 
     if isinstance(instance, (Iterable, QuerySet)) and not isinstance(instance, (Mapping, str)):
         instance = list([get_attribute_smart(obj, [attrs[0]]) for obj in instance])

@@ -13,17 +13,11 @@ class NestedComplexRouter(routers.NestedSimpleRouter):
         # this is run in super()
         # re-running as we need that variables
         parent_registry = [
-            registered for registered
-            in self.parent_router.registry
-            if registered[0] == self.parent_prefix
+            registered for registered in self.parent_router.registry if registered[0] == self.parent_prefix
         ]
         parent_registry = parent_registry[0]
         parent_prefix, parent_viewset, parent_basename = parent_registry
 
         viewset.parent = parent_viewset
         viewset.parent_lookup_field = self.nest_prefix[:-1]
-        viewset.parent_lookup_kwarg = self.nest_prefix + getattr(
-            parent_viewset,
-            'lookup_field',
-            'pk'
-        )
+        viewset.parent_lookup_kwarg = self.nest_prefix + getattr(parent_viewset, "lookup_field", "pk")

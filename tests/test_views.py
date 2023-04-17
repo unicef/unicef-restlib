@@ -28,10 +28,12 @@ def test_view_get_no_parent(client, author):
 
 def test_view_filter(client, book, author):
     assert author.active
-    response = client.get("{}?auditor__pk={}".format(
-        reverse("sample:book-filter-nested-list"),
-        author.pk,
-    ))
+    response = client.get(
+        "{}?auditor__pk={}".format(
+            reverse("sample:book-filter-nested-list"),
+            author.pk,
+        )
+    )
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 1
@@ -40,9 +42,11 @@ def test_view_filter(client, book, author):
 
 def test_view_filter_true(client, book, author):
     assert author.active
-    response = client.get("{}?active=true".format(
-        reverse("sample:book-filter-nested-list"),
-    ))
+    response = client.get(
+        "{}?active=true".format(
+            reverse("sample:book-filter-nested-list"),
+        )
+    )
     assert response.status_code == 200
     assert len(response.json()) == 1
 
@@ -51,10 +55,12 @@ def test_view_filter_invalid(client, book, author):
     author.active = False
     author.save()
     assert not author.active
-    response = client.get("{}?auditor__pk={}".format(
-        reverse("sample:book-filter-nested-list"),
-        author.pk,
-    ))
+    response = client.get(
+        "{}?auditor__pk={}".format(
+            reverse("sample:book-filter-nested-list"),
+            author.pk,
+        )
+    )
     assert response.status_code == 200
     assert len(response.json()) == 0
 
@@ -82,16 +88,20 @@ def test_view_filter_no_parent_filter_not_found(client, book):
 def test_view_filter_isnull(client, book, author, superuser):
     client.force_login(superuser)
     assert author.first_name
-    response = client.get("{}?first_name_exists=true".format(
-        reverse("sample:list"),
-    ))
+    response = client.get(
+        "{}?first_name_exists=true".format(
+            reverse("sample:list"),
+        )
+    )
     assert response.status_code == 200
     assert len(response.json()) == 1
 
     # get opposite
-    response = client.get("{}?first_name_exists=false".format(
-        reverse("sample:list"),
-    ))
+    response = client.get(
+        "{}?first_name_exists=false".format(
+            reverse("sample:list"),
+        )
+    )
     assert response.status_code == 200
     assert len(response.json()) == 0
 
@@ -177,13 +187,13 @@ def test_nested_view_get_root_object_no_parent(client, author):
 @pytest.mark.parametrize(
     "query_string, results_len ",
     [
-        ('', 3),
-        ('?first_name=demo', 1),
-        ('?search=de', 1),
-        ('?first_name=test,demo', 2),
-        ('?name=test', 2),
-        ('?custom=best', 2),
-    ]
+        ("", 3),
+        ("?first_name=demo", 1),
+        ("?search=de", 1),
+        ("?first_name=test,demo", 2),
+        ("?name=test", 2),
+        ("?custom=best", 2),
+    ],
 )
 def test_query_string_api_view(api_client, superuser, query_string, results_len, authors):
     authors.get(first_name="demo", last_name="test", active=False)
@@ -192,8 +202,8 @@ def test_query_string_api_view(api_client, superuser, query_string, results_len,
 
     api_client.force_authenticate(user=superuser)
 
-    url = reverse('sample:list') + query_string
-    results = api_client.get(url, format='json').json()
+    url = reverse("sample:list") + query_string
+    results = api_client.get(url, format="json").json()
 
     assert len(results) == results_len
 

@@ -11,12 +11,11 @@ from unicef_restlib.fields import ModelChoiceField, SeparatedReadWriteField
 
 
 class SeparatedReadWriteFieldMetadata:
-    """Mixin for providing correct information about SeparatedReadWriteField.
-    """
+    """Mixin for providing correct information about SeparatedReadWriteField."""
 
     def get_field_info(self, field):
         if isinstance(field, SeparatedReadWriteField):
-            if field.context['request'].method == 'GET':
+            if field.context["request"].method == "GET":
                 field = field.read_field or field.write_field
             else:
                 field = field.write_field
@@ -34,12 +33,12 @@ class FSMTransitionActionMetadataMixin:
         attrs = dir(instance)
         for attr in attrs:
             instance_action = getattr(instance, attr, None)
-            if instance_action and hasattr(instance_action, '_django_fsm'):
+            if instance_action and hasattr(instance_action, "_django_fsm"):
                 actions.append(instance_action)
         return actions
 
     def _get_instance(self, view):
-        if hasattr(view, 'kwargs') and view.kwargs and 'pk' in view.kwargs:
+        if hasattr(view, "kwargs") and view.kwargs and "pk" in view.kwargs:
             return self.get_object(view.queryset.model, view.kwargs["pk"])
 
     def get_object(self, model, pk):
@@ -53,7 +52,7 @@ class FSMTransitionActionMetadataMixin:
         if not instance:
             return actions
 
-        current_state = getattr(instance, 'status', None)
+        current_state = getattr(instance, "status", None)
         if current_state is None:
             return actions
 
@@ -61,54 +60,44 @@ class FSMTransitionActionMetadataMixin:
         for action in self._collect_actions(instance):
             meta = action._django_fsm
 
-            if meta.has_transition(current_state) and meta.has_transition_perm(
-                    instance,
-                    current_state,
-                    request.user
-            ):
+            if meta.has_transition(current_state) and meta.has_transition_perm(instance, current_state, request.user):
                 transition = meta.get_transition(current_state)
 
-                name = transition.custom.get('name', transition.name)
+                name = transition.custom.get("name", transition.name)
                 if callable(name):
                     name = name(instance)
 
-                allowed_FSM_transitions.append({
-                    'code': action.__name__,
-                    'display_name': name
-                })
+                allowed_FSM_transitions.append({"code": action.__name__, "display_name": name})
 
         # Move cancel to the end.
-        actions["allowed_FSM_transitions"] = sorted(
-            allowed_FSM_transitions, key=lambda a: a['code'] == 'cancel'
-        )
+        actions["allowed_FSM_transitions"] = sorted(allowed_FSM_transitions, key=lambda a: a["code"] == "cancel")
 
         return actions
 
 
 class CRUActionsMetadataMixin:
-    """Return "GET" with readable fields as allowed method.
-    """
+    """Return "GET" with readable fields as allowed method."""
 
     def determine_actions(self, request, view):
         """For generic class based views we return information about
         the fields that are accepted for 'PUT' and 'POST' methods.
         """
         actions = {}
-        for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
+        for method in {"PUT", "POST", "GET"} & set(view.allowed_methods):
             view.request = clone_request(request, method)
 
-            if hasattr(view, 'action_map'):
+            if hasattr(view, "action_map"):
                 view.action = view.action_map.get(method.lower(), None)
 
             try:
                 # Test global permissions
-                if hasattr(view, 'check_permissions'):
+                if hasattr(view, "check_permissions"):
                     view.check_permissions(view.request)
 
                 # Test object permissions
                 instance = None
                 lookup_url_kwarg = view.lookup_url_kwarg or view.lookup_field
-                if lookup_url_kwarg in view.kwargs and hasattr(view, 'get_object'):
+                if lookup_url_kwarg in view.kwargs and hasattr(view, "get_object"):
                     instance = view.get_object()
 
             except (exceptions.APIException, PermissionDenied, Http404):
@@ -136,17 +125,13 @@ class CRUActionsMetadataMixin:
 
 
 class ReadOnlyFieldWithChoicesMixin:
-    """Return choices for read only fields.
-    """
+    """Return choices for read only fields."""
 
     def get_field_info(self, field):
         field_info = super().get_field_info(field)
-        if isinstance(field, ChoiceField) and hasattr(field, 'choices'):
-            field_info['choices'] = [
-                {
-                    'value': choice_value,
-                    'display_name': force_str(choice_name, strings_only=True)
-                }
+        if isinstance(field, ChoiceField) and hasattr(field, "choices"):
+            field_info["choices"] = [
+                {"value": choice_value, "display_name": force_str(choice_name, strings_only=True)}
                 for choice_value, choice_name in field.choices.items()
             ]
         return field_info
@@ -159,12 +144,9 @@ class ModelChoiceFieldMixin:
 
     def get_field_info(self, field):
         field_info = super().get_field_info(field)
-        if (not field_info.get('read_only') and isinstance(field, ModelChoiceField) and hasattr(field, 'choices')):
-            field_info['choices'] = [
-                {
-                    'value': choice_value,
-                    'display_name': force_str(choice_name, strings_only=True)
-                }
+        if not field_info.get("read_only") and isinstance(field, ModelChoiceField) and hasattr(field, "choices"):
+            field_info["choices"] = [
+                {"value": choice_value, "display_name": force_str(choice_name, strings_only=True)}
                 for choice_value, choice_name in field.choices.items()
             ]
         return field_info

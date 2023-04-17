@@ -9,12 +9,11 @@ from tests.factories import UserFactory
 
 @pytest.mark.django_db
 def test_is_super_user():
-
     user = UserFactory(is_superuser=True)
 
     client = APIClient()
 
-    list_url = reverse('sample:list')
+    list_url = reverse("sample:list")
     response = client.get(list_url)
     assert response.status_code == 403
 

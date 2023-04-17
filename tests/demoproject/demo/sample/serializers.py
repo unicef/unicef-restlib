@@ -25,13 +25,15 @@ from demo.sample.utils import author_description
 class ActivitySerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
     class Meta(WritableNestedChildSerializerMixin.Meta):
         model = Activity
-        fields = ("id", "activity_type", "activity_count",)
+        fields = (
+            "id",
+            "activity_type",
+            "activity_count",
+        )
 
 
 class ImageFileTypeSerializer(serializers.ModelSerializer):
-    file_type = FileTypeModelChoiceField(
-        queryset=FileType.objects.filter(code='image')
-    )
+    file_type = FileTypeModelChoiceField(queryset=FileType.objects.filter(code="image"))
 
     class Meta:
         model = Image
@@ -49,19 +51,30 @@ class ImageFileTypeChoiceSerializer(serializers.ModelSerializer):
 class ImageSerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
     class Meta(WritableNestedChildSerializerMixin.Meta):
         model = Image
-        fields = ("id", "filename",)
+        fields = (
+            "id",
+            "filename",
+        )
 
 
 class ReviewSerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
     class Meta(WritableNestedChildSerializerMixin.Meta):
         model = Review
-        fields = ("id", "user", "rating",)
+        fields = (
+            "id",
+            "user",
+            "rating",
+        )
 
 
 class ReviewUserSerializer(UserContextSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ("id", "user", "rating",)
+        fields = (
+            "id",
+            "user",
+            "rating",
+        )
 
 
 class ReviewMetaSerializer(serializers.ModelSerializer):
@@ -72,16 +85,18 @@ class ReviewMetaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ("id", "user", "rating", "status", "active",)
+        fields = (
+            "id",
+            "user",
+            "rating",
+            "status",
+            "active",
+        )
 
 
-class BookSerializer(
-        DeletableSerializerMixin,
-        WritableNestedChildSerializerMixin,
-        serializers.ModelSerializer
-):
+class BookSerializer(DeletableSerializerMixin, WritableNestedChildSerializerMixin, serializers.ModelSerializer):
     genre = DynamicChoicesField(choices=Book.GENRE_CHOICES, required=False)
-    author_description = FunctionRelatedField(source='author', read_only=True, callable_function=author_description)
+    author_description = FunctionRelatedField(source="author", read_only=True, callable_function=author_description)
 
     class Meta(DeletableSerializerMixin.Meta, WritableNestedChildSerializerMixin.Meta):
         model = Book
@@ -94,11 +109,7 @@ class AuthorSerializer(WritableNestedParentSerializerMixin, serializers.ModelSer
     profile_images = ImageSerializer(many=True, required=False)
     full_images = ImageSerializer(many=True, required=False)
     reviews = ReviewSerializer(many=True, required=False)
-    review_ratings = CommaSeparatedExportField(
-        source="reviews",
-        required=False,
-        export_attr="rating"
-    )
+    review_ratings = CommaSeparatedExportField(source="reviews", required=False, export_attr="rating")
 
     class Meta:
         model = Author
@@ -114,13 +125,21 @@ class AuthorMetaSerializer(serializers.ModelSerializer):
 class AuthorPKSerializer(PKSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ("pk", "first_name", "last_name",)
+        fields = (
+            "pk",
+            "first_name",
+            "last_name",
+        )
 
 
 class AuthorIDSerializer(PKSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ("id", "first_name", "last_name",)
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+        )
 
 
 class ISBNSerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
@@ -134,13 +153,20 @@ class BookISBNSerializer(WritableNestedParentSerializerMixin, serializers.ModelS
 
     class Meta:
         model = Book
-        fields = ("name", "isbn", "author",)
+        fields = (
+            "name",
+            "isbn",
+            "author",
+        )
 
 
 class BookForwardSerializer(WritableNestedChildSerializerMixin, serializers.ModelSerializer):
     class Meta(WritableNestedChildSerializerMixin.Meta):
         model = Book
-        fields = ("id", "name",)
+        fields = (
+            "id",
+            "name",
+        )
 
 
 class ISBNForwardSerializer(WritableNestedParentSerializerMixin, serializers.ModelSerializer):
@@ -148,7 +174,11 @@ class ISBNForwardSerializer(WritableNestedParentSerializerMixin, serializers.Mod
 
     class Meta:
         model = ISBN
-        fields = ("id", "code", "book",)
+        fields = (
+            "id",
+            "code",
+            "book",
+        )
 
 
 class ReviewAuthorSerializer(WritableNestedParentSerializerMixin, serializers.ModelSerializer):
@@ -170,7 +200,12 @@ class AuthorReviewsSerializer(WritableNestedParentSerializerMixin, serializers.M
 class AuthorSeparatedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ("id", "first_name", "last_name", "active",)
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "active",
+        )
 
 
 class BookSeparatedSerializer(serializers.ModelSerializer):
@@ -181,7 +216,12 @@ class BookSeparatedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ("id", "author", "name", "sku_number",)
+        fields = (
+            "id",
+            "author",
+            "name",
+            "sku_number",
+        )
 
 
 class BookSeparatedWriteSerializer(serializers.ModelSerializer):
@@ -193,18 +233,25 @@ class BookSeparatedWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ("id", "author", "name", "sku_number",)
+        fields = (
+            "id",
+            "author",
+            "name",
+            "sku_number",
+        )
 
 
 class CategorySerializer(WritableNestedSerializerMixin, serializers.ModelSerializer):
-    children = RecursiveListSerializer(
-        child=WriteListSerializeFriendlyRecursiveField(required=False),
-        required=False
-    )
+    children = RecursiveListSerializer(child=WriteListSerializeFriendlyRecursiveField(required=False), required=False)
 
     class Meta(WritableNestedSerializerMixin.Meta):
         model = Category
-        fields = ("id", "name", "parent", "children",)
+        fields = (
+            "id",
+            "name",
+            "parent",
+            "children",
+        )
 
 
 class CategoryAbstractPKSerializer(PKSerializerMixin, serializers.ModelSerializer):

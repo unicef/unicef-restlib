@@ -10,10 +10,4 @@ def test_get_attribute_smart_no_attrs():
 
 
 def test_get_attribute_smart():
-    assert utils.get_attribute_smart({
-        "instances": [
-            {"id": 1},
-            {"id": 2},
-            {"id": 3}
-        ]
-    }, "instances.id") == [1, 2, 3]
+    assert utils.get_attribute_smart({"instances": [{"id": 1}, {"id": 2}, {"id": 3}]}, "instances.id") == [1, 2, 3]

@@ -125,10 +125,10 @@ class CategoryAbstract(models.Model):
 
 class Category(CategoryAbstract):
     parent = parent = models.ForeignKey(
-        'self',
+        "self",
         null=True,
         blank=True,
-        related_name='children',
+        related_name="children",
         db_index=True,
         on_delete=models.CASCADE,
     )

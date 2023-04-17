@@ -21,18 +21,14 @@ def test_view_paginate_optional(client, authors):
     assert data["count"] == author_qs.count()
 
     # set page size
-    response = client.get(
-        "{}?page_size=5".format(reverse("sample:authors-paginate"))
-    )
+    response = client.get("{}?page_size=5".format(reverse("sample:authors-paginate")))
     assert response.status_code == 200
     data = response.json()
     assert len(data["results"]) == 5
     assert data["count"] == author_qs.count()
 
     # set page size to `all`
-    response = client.get(
-        "{}?page_size=all".format(reverse("sample:authors-paginate"))
-    )
+    response = client.get("{}?page_size=all".format(reverse("sample:authors-paginate")))
     assert response.status_code == 200
     data = response.json()
     assert "results" not in data

@@ -34,6 +34,7 @@ def authors():
     class AuthorFactory:
         def get(self, **kwargs):
             return factories.AuthorFactory(**kwargs)
+
     return AuthorFactory()
 
 
@@ -47,6 +48,7 @@ def books(author):
     class BookFactory:
         def get(self, author=author):
             return factories.BookFactory(author=author)
+
     return BookFactory()
 
 
@@ -65,6 +67,7 @@ def activities(author):
     class ActivityFactory:
         def get(self):
             return factories.ActivityFactory(obj=author)
+
     return ActivityFactory()
 
 
@@ -83,6 +86,7 @@ def images(author):
     class ImageFactory:
         def get(self, author=author, **kwargs):
             return factories.ImageFactory(obj=author, **kwargs)
+
     return ImageFactory()
 
 
@@ -96,6 +100,7 @@ def reviews(author, user):
     class ReviewFactory:
         def get(self, **kwargs):
             return factories.ReviewFactory(**kwargs)
+
     return ReviewFactory()
 
 
@@ -109,4 +114,5 @@ def categories():
     class CategoryFactory:
         def get(self, **kwargs):
             return factories.CategoryFactory(**kwargs)
+
     return CategoryFactory()

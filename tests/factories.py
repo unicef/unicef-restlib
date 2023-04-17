@@ -61,10 +61,7 @@ class FileTypeFactory(factory.django.DjangoModelFactory):
 class ImageFactory(factory.django.DjangoModelFactory):
     filename = factory.Faker("file_name")
     obj = factory.SubFactory(AuthorFactory)
-    code = factory.fuzzy.FuzzyChoice([
-        "author_profile_image",
-        "author_full_image"
-    ])
+    code = factory.fuzzy.FuzzyChoice(["author_profile_image", "author_full_image"])
 
     class Meta:
         model = models.Image

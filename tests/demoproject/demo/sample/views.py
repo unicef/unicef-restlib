@@ -98,13 +98,13 @@ class AuthorView(QueryStringFilterMixin, ListAPIView):
     serializer_class = serializers.AuthorSerializer
     permission_classes = (IsSuperUser,)
     filters = (
-        ('first_name', 'first_name__in'),
-        ('active', 'active'),
-        ('name', ['first_name', 'last_name']),
-        ('custom', {'best': [('active', True), ('activities__isnull', True)]}),
-        ('first_name_exists', 'first_name__isnotnull'),
+        ("first_name", "first_name__in"),
+        ("active", "active"),
+        ("name", ["first_name", "last_name"]),
+        ("custom", {"best": [("active", True), ("activities__isnull", True)]}),
+        ("first_name_exists", "first_name__isnotnull"),
     )
-    search_terms = ('first_name__istartswith',)
+    search_terms = ("first_name__istartswith",)
 
 
 class AuthorMetaCRUListView(ListAPIView):

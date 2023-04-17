@@ -19,8 +19,7 @@ class MultiSerializerViewSetMixin:
 
 
 class NestedViewSetMixin:
-    """Allow viewsets inheritance with correct filtering depending on parents.
-    """
+    """Allow viewsets inheritance with correct filtering depending on parents."""
 
     parent = None
     parent_lookup_kwarg = None
@@ -59,13 +58,9 @@ class NestedViewSetMixin:
 
             if parent_filter is None:
                 parent_filter = {
-                    '{}__{}'.format(
-                        '__'.join(lookups), getattr(
-                            child.parent,
-                            'lookup_field',
-                            'pk'
-                        )
-                    ): self.kwargs.get(child.parent_lookup_kwarg)
+                    "{}__{}".format("__".join(lookups), getattr(child.parent, "lookup_field", "pk")): self.kwargs.get(
+                        child.parent_lookup_kwarg
+                    )
                 }
 
             filters.update(parent_filter)
@@ -74,7 +69,7 @@ class NestedViewSetMixin:
         return filters
 
     def get_parent(self):
-        parent_class = getattr(self, 'parent', None)
+        parent_class = getattr(self, "parent", None)
         if not parent_class:
             return
 
@@ -82,7 +77,7 @@ class NestedViewSetMixin:
             request=self.request,
             kwargs=self.kwargs,
             lookup_url_kwarg=self.parent_lookup_kwarg,
-            action='parent',
+            action="parent",
         )
 
     def get_parent_object(self):
@@ -113,11 +108,7 @@ class NestedViewSetMixin:
                 return
 
             pre_root = parents[-2] if len(parents) > 1 else self
-            root = parents[-1](
-                request=self.request,
-                kwargs=self.kwargs,
-                lookup_url_kwarg=pre_root.parent_lookup_kwarg
-            )
+            root = parents[-1](request=self.request, kwargs=self.kwargs, lookup_url_kwarg=pre_root.parent_lookup_kwarg)
 
             root_object = root.get_object()
         finally:
@@ -143,7 +134,8 @@ class SafeTenantViewSetMixin:
 
 class QueryStringFilterMixin:
     """Mixin which allow to filter and search based on querystring filters"""
-    search_param = 'search'
+
+    search_param = "search"
     filters = ()
     search_terms = ()
 
@@ -157,7 +149,7 @@ class QueryStringFilterMixin:
                     value = True if value == "true" else False
                 or_queries = []
                 if isinstance(query_filter, dict):
-                    values = value.split(',')
+                    values = value.split(",")
                     for value in values:
                         filter_list = query_filter.get(value, [])
                         subqueries = [Q(**{dict_filter: dict_value}) for dict_filter, dict_value in filter_list]
@@ -167,9 +159,9 @@ class QueryStringFilterMixin:
                     subq = [Q(**{filter: value}) for filter in query_filter]
                     queries.append(functools.reduce(operator.or_, subq))
                 else:
-                    if query_filter.endswith('__in') and value:
-                        value = value.split(',')
-                    elif query_filter.endswith('__isnotnull'):
+                    if query_filter.endswith("__in") and value:
+                        value = value.split(",")
+                    elif query_filter.endswith("__isnotnull"):
                         query_filter = query_filter.replace(
                             "__isnotnull",
                             "__isnull",

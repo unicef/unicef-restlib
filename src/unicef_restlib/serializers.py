@@ -26,43 +26,39 @@ class PKSerializerMixin:
         if self._pk_field:
             return self._pk_field
 
-        assert hasattr(self, 'Meta'), (
-            'Class {serializer_class} missing "Meta" attribute'.format(
-                serializer_class=self.__class__.__name__
-            )
+        assert hasattr(self, "Meta"), 'Class {serializer_class} missing "Meta" attribute'.format(
+            serializer_class=self.__class__.__name__
         )
-        assert hasattr(self.Meta, 'model'), (
-            'Class {serializer_class} missing "Meta.model" attribute'.format(
-                serializer_class=self.__class__.__name__
-            )
+        assert hasattr(self.Meta, "model"), 'Class {serializer_class} missing "Meta.model" attribute'.format(
+            serializer_class=self.__class__.__name__
         )
         if model_meta.is_abstract_model(self.Meta.model):
-            raise ValueError(
-                'Cannot use ModelSerializer with Abstract Models.'
-            )
+            raise ValueError("Cannot use ModelSerializer with Abstract Models.")
 
         model = self.Meta.model
         info = model_meta.get_field_info(model)
 
-        if 'pk' in self.fields:
-            self._pk_field = self.fields['pk']
+        if "pk" in self.fields:
+            self._pk_field = self.fields["pk"]
             return self._pk_field
 
         if info.pk.name in self.fields:
             self._pk_field = self.fields[info.pk.name]
             return self._pk_field
 
-        assert False, "Serializer {serializer_class} doesn't contain primary key field. " \
-            'Add `pk` or `{pk_name}` to fields attribute.'.format(
-                serializer_class=self.__class__.__name__,
-                pk_name=info.pk.name
+        assert False, (
+            "Serializer {serializer_class} doesn't contain primary key field. "
+            "Add `pk` or `{pk_name}` to fields attribute.".format(
+                serializer_class=self.__class__.__name__, pk_name=info.pk.name
             )
+        )
 
 
 class DeletableSerializerMixin(metaclass=SerializerMetaclass):
     """Mixin that allow delete object from list through partial update.
     `_delete` field is used to mark object for delete.
     """
+
     _delete = serializers.BooleanField(
         write_only=True,
         required=False,
@@ -70,7 +66,7 @@ class DeletableSerializerMixin(metaclass=SerializerMetaclass):
     )
 
     class Meta:
-        delete_field = '_delete'
+        delete_field = "_delete"
 
     @property
     def _delete_field(self):
@@ -95,11 +91,7 @@ class DeletableSerializerMixin(metaclass=SerializerMetaclass):
 
     def create(self, validated_data):
         if self._delete_field and validated_data.pop(self._delete_field.source, False):
-            raise serializers.ValidationError({
-                self.Meta.delete_field: [
-                    _('You can\'t delete not exist object.')
-                ]
-            })
+            raise serializers.ValidationError({self.Meta.delete_field: [_("You can't delete not exist object.")]})
 
         return super().create(validated_data)
 
@@ -115,6 +107,7 @@ class WritableListSerializer(serializers.ListSerializer):
     """List serializer that allow modify nested objects including
     creation and deleting.
     """
+
     @method_decorator(transaction.atomic)
     def update(self, instance, validated_data):
         if isinstance(instance, models.Manager):
@@ -137,33 +130,27 @@ class WritableListSerializer(serializers.ListSerializer):
                 pk = None
 
             try:
-
                 if pk:
                     if pk not in exists_instances:
-                        raise serializers.ValidationError({
-                            self.child.pk_field.field_name: _(
-                                '{} with pk `{}` doesn\'t exists.'
-                            ).format(
-                                model._meta.verbose_name.title(),
-                                pk
-                            ),
-                        })
+                        raise serializers.ValidationError(
+                            {
+                                self.child.pk_field.field_name: _("{} with pk `{}` doesn't exists.").format(
+                                    model._meta.verbose_name.title(), pk
+                                ),
+                            }
+                        )
 
                     if pk not in excess_instances_pks:
-                        raise serializers.ValidationError({
-                            self.child.pk_field.field_name: _(
-                                'Duplication {} with pk `{}`.'
-                            ).format(
-                                model._meta.verbose_name,
-                                pk
-                            )
-                        })
+                        raise serializers.ValidationError(
+                            {
+                                self.child.pk_field.field_name: _("Duplication {} with pk `{}`.").format(
+                                    model._meta.verbose_name, pk
+                                )
+                            }
+                        )
                     excess_instances_pks.remove(pk)
 
-                    result.append(self.child.update(
-                        exists_instances[pk],
-                        data
-                    ))
+                    result.append(self.child.update(exists_instances[pk], data))
                 else:
                     result.append(self.child.create(data))
 
@@ -174,7 +161,7 @@ class WritableListSerializer(serializers.ListSerializer):
         if has_error:
             raise serializers.ValidationError(errors)
 
-        if excess_instances_pks and not getattr(self.root, 'partial', False):
+        if excess_instances_pks and not getattr(self.root, "partial", False):
             model._default_manager.filter(pk__in=excess_instances_pks).delete()
 
         return result
@@ -184,6 +171,7 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
     """Mixin that allow serializer to create and modify
     related data as nested serializer.
     """
+
     class Meta:
         list_serializer_class = WritableListSerializer
 
@@ -209,15 +197,11 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
 
             while i < len(field.validators):
                 validator = field.validators[i]
-                if not isinstance(validator, (
-                        UniqueValidator,
-                        UniqueTogetherValidator,
-                        BaseUniqueForValidator
-                )):
+                if not isinstance(validator, (UniqueValidator, UniqueTogetherValidator, BaseUniqueForValidator)):
                     i += 1
                     continue
 
-                if not hasattr(field, '_deferred_validators'):
+                if not hasattr(field, "_deferred_validators"):
                     field._deferred_validators = []
 
                 field._deferred_validators.append(validator)
@@ -233,7 +217,7 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
         """
         errors = {}
         for field_name, field in self.fields.items():
-            if not hasattr(field, '_deferred_validators'):
+            if not hasattr(field, "_deferred_validators"):
                 continue
 
             value = data.get(field_name)
@@ -241,10 +225,10 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
                 continue
 
             for validator in field._deferred_validators:
-                if hasattr(validator, 'set_context'):
+                if hasattr(validator, "set_context"):
                     validator.set_context(field)
 
-                if hasattr(validator, 'instance') and not validator.instance:
+                if hasattr(validator, "instance") and not validator.instance:
                     validator.instance = instance
 
                 try:
@@ -263,13 +247,13 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
         # In this case validation allow to skip required fields
         # and we create instance without these fields.
         # To avoid this we make additional validation for required fields.
-        if getattr(self.root, 'partial', False):
+        if getattr(self.root, "partial", False):
             fields = self._writable_fields
             errors = dict()
             for field in fields:
                 if field.required and field.field_name not in validation_data:
                     try:
-                        field.fail('required')
+                        field.fail("required")
                     except serializers.ValidationError as exc:
                         errors[field.field_name] = exc.detail
 
@@ -286,12 +270,13 @@ class WritableNestedChildSerializerMixin(PKSerializerMixin):
 
 
 class WritableNestedParentSerializerMixin:
-    """Serializer that allow to create and update nested objects.
-    """
+    """Serializer that allow to create and update nested objects."""
+
     @property
     def writable_nested_serializers(self):
         return [
-            field_name for field_name, field in self.fields.items()
+            field_name
+            for field_name, field in self.fields.items()
             if isinstance(field, serializers.BaseSerializer) and not field.read_only
         ]
 
@@ -304,23 +289,21 @@ class WritableNestedParentSerializerMixin:
         """
         assert len(nested_serializer.source_attrs) == 1, "We don't support fields with complex source."
 
-        related_descriptor = get_attribute(
-            self.Meta.model,
-            nested_serializer.source_attrs
-        )
+        related_descriptor = get_attribute(self.Meta.model, nested_serializer.source_attrs)
 
         if isinstance(related_descriptor, related_descriptors.ReverseOneToOneDescriptor):
-            return related_descriptor.related.field, 'forward'
+            return related_descriptor.related.field, "forward"
         if isinstance(related_descriptor, related_descriptors.ReverseManyToOneDescriptor):
-            return related_descriptor.field, 'forward'
-        if (isinstance(
-                related_descriptor,
-                related_descriptors.ForwardManyToOneDescriptor
-        ) and isinstance(related_descriptor.field, related.OneToOneField)):
-            return related_descriptor.field, 'reverse'
+            return related_descriptor.field, "forward"
+        if isinstance(related_descriptor, related_descriptors.ForwardManyToOneDescriptor) and isinstance(
+            related_descriptor.field, related.OneToOneField
+        ):
+            return related_descriptor.field, "reverse"
 
-        assert False, "We don't support many to many relation and forward many to one " \
-                      "because updating this relation have side effect."
+        assert False, (
+            "We don't support many to many relation and forward many to one "
+            "because updating this relation have side effect."
+        )
 
     def _get_related_data(self, instance, nested_serializer):
         """Return value of foreign key and additional fields on the basis of
@@ -329,9 +312,7 @@ class WritableNestedParentSerializerMixin:
         :param nested_serializer:
         :return: Dictionary with fields values.
         """
-        related_model_field, relation_type = self._get_related_model_field(
-            nested_serializer
-        )
+        related_model_field, relation_type = self._get_related_model_field(nested_serializer)
 
         data = {
             lr_field.attname: getattr(instance, fr_field.attname)
@@ -339,22 +320,22 @@ class WritableNestedParentSerializerMixin:
         }
 
         if isinstance(related_model_field, GenericRelation):
-            data.update({
-                related_model_field.content_type_field_name: ContentType.objects.get_for_model(
-                    instance
-                ),
-            })
+            data.update(
+                {
+                    related_model_field.content_type_field_name: ContentType.objects.get_for_model(instance),
+                }
+            )
         if isinstance(related_model_field, CodedGenericRelation):
-            data.update({
-                related_model_field.code_field: related_model_field.code,
-            })
+            data.update(
+                {
+                    related_model_field.code_field: related_model_field.code,
+                }
+            )
 
         return data
 
     def _save_nested_data(self, instance, field, data):
-        related_model_field, relation_type = self._get_related_model_field(
-            field
-        )
+        related_model_field, relation_type = self._get_related_model_field(field)
 
         if instance:
             try:
@@ -366,15 +347,17 @@ class WritableNestedParentSerializerMixin:
 
         # Object forced set to null.
         if data is None:
-            if nested_instance and relation_type == 'forward':
+            if nested_instance and relation_type == "forward":
                 nested_instance.delete()
             return None
 
-        if relation_type == 'forward':
-            assert instance, "In the case for forward relation between parent and child " \
-                             "saving nested serializer require parent instance."
+        if relation_type == "forward":
+            assert instance, (
+                "In the case for forward relation between parent and child "
+                "saving nested serializer require parent instance."
+            )
             related_data = self._get_related_data(instance, field)
-            if getattr(field, 'many', False):
+            if getattr(field, "many", False):
                 data = [OrderedDict(d, **related_data) for d in data]
             else:
                 data = OrderedDict(data, **related_data)
@@ -392,20 +375,15 @@ class WritableNestedParentSerializerMixin:
     @method_decorator(transaction.atomic)
     def create(self, validated_data):
         # Separate nested data.
-        nested_data, validated_data = pop_keys(
-            validated_data,
-            self.writable_nested_serializers
-        )
+        nested_data, validated_data = pop_keys(validated_data, self.writable_nested_serializers)
 
         forward_nested_data = {}
         errors = {}
         for field_name, data in nested_data.items():
             field = self.fields[field_name]
 
-            related_model_field, relation_type = self._get_related_model_field(
-                field
-            )
-            if relation_type == 'forward':
+            related_model_field, relation_type = self._get_related_model_field(field)
+            if relation_type == "forward":
                 forward_nested_data[field_name] = data
                 continue
 
@@ -438,20 +416,15 @@ class WritableNestedParentSerializerMixin:
     @method_decorator(transaction.atomic)
     def update(self, instance, validated_data):
         # Separate nested data.
-        nested_data, validated_data = pop_keys(
-            validated_data,
-            self.writable_nested_serializers
-        )
+        nested_data, validated_data = pop_keys(validated_data, self.writable_nested_serializers)
 
         forward_nested_data = {}
         errors = {}
         for field_name, data in nested_data.items():
             field = self.fields[field_name]
 
-            related_model_field, relation_type = self._get_related_model_field(
-                field
-            )
-            if relation_type == 'forward':
+            related_model_field, relation_type = self._get_related_model_field(field)
+            if relation_type == "forward":
                 forward_nested_data[field_name] = data
                 continue
 
@@ -483,24 +456,19 @@ class WritableNestedParentSerializerMixin:
 
 
 class WritableNestedSerializerMixin(
-        DeletableSerializerMixin,
-        WritableNestedChildSerializerMixin,
-        WritableNestedParentSerializerMixin
+    DeletableSerializerMixin, WritableNestedChildSerializerMixin, WritableNestedParentSerializerMixin
 ):
-    class Meta(
-            DeletableSerializerMixin.Meta,
-            WritableNestedChildSerializerMixin.Meta
-    ):
+    class Meta(DeletableSerializerMixin.Meta, WritableNestedChildSerializerMixin.Meta):
         pass
 
 
 class UserContextSerializerMixin:
     def get_user(self):
-        return self.context.get('user') or self.context.get('request').user
+        return self.context.get("user") or self.context.get("request").user
 
 
 class RecursiveListSerializer(WritableListSerializer):
     def update(self, instance, validated_data):
-        if hasattr(self.child, 'proxied'):
+        if hasattr(self.child, "proxied"):
             self.child = self.child.proxied
         return super().update(instance, validated_data)

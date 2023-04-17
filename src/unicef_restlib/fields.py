@@ -17,12 +17,12 @@ class builtin_field:
 
 class ModelChoiceField(serializers.PrimaryKeyRelatedField):
     default_error_messages = {
-        'does_not_exist': _('Invalid option "{pk_value}" - option is not available.'),
+        "does_not_exist": _('Invalid option "{pk_value}" - option is not available.'),
     }
 
     @property
     def choices(self):
-        if hasattr(self._choices, '__call__'):
+        if hasattr(self._choices, "__call__"):
             self._choices = self._choices()
         return self._choices
 
@@ -44,7 +44,9 @@ class SeparatedReadWriteField(Field):
         self.write_field = write_field
 
         # update fields from kwargs
-        for kwarg_name in {'label', } & set(kwargs.keys()):
+        for kwarg_name in {
+            "label",
+        } & set(kwargs.keys()):
             setattr(self.read_field, kwarg_name, kwargs[kwarg_name])
 
             if self.write_field is not builtin_field:
@@ -71,48 +73,37 @@ class SeparatedReadWriteField(Field):
           have validation applied as normal.
         """
         if data is empty:
-            if getattr(self.root, 'partial', False):
+            if getattr(self.root, "partial", False):
                 raise SkipField()
             if self.write_field.required:
-                self.fail('required')
+                self.fail("required")
             return (True, self.get_default())
 
         if data is None:
             if not self.write_field.allow_null:
-                self.fail('null')
+                self.fail("null")
             return (True, None)
 
         return (False, data)
 
     def _build_field(self):
-        model = getattr(self.parent.Meta, 'model')
-        depth = getattr(self.parent.Meta, 'depth', 0)
+        model = getattr(self.parent.Meta, "model")
+        depth = getattr(self.parent.Meta, "depth", 0)
         info = model_meta.get_field_info(model)
 
         # Determine any extra field arguments and hidden fields that
         # should be included
         extra_kwargs = self.parent.get_extra_kwargs()
         extra_kwargs.update(self._kwargs)
-        extra_kwargs, hidden_fields = self.parent.get_uniqueness_extra_kwargs(
-            [self.field_name], [self], extra_kwargs
-        )
-        extra_field_kwargs = {
-            key: value for key, value in self._kwargs.items()
-            if key not in ['read_field']
-        }
+        extra_kwargs, hidden_fields = self.parent.get_uniqueness_extra_kwargs([self.field_name], [self], extra_kwargs)
+        extra_field_kwargs = {key: value for key, value in self._kwargs.items() if key not in ["read_field"]}
 
         # Determine the serializer field class and keyword arguments.
-        field_class, field_kwargs = self.parent.build_field(
-            self.field_name, info, model, depth
-        )
+        field_class, field_kwargs = self.parent.build_field(self.field_name, info, model, depth)
 
         # Include any kwargs defined in `Meta.extra_kwargs`
-        extra_field_kwargs.update(
-            extra_kwargs.get(self.field_name, {})
-        )
-        field_kwargs = self.parent.include_extra_kwargs(
-            field_kwargs, extra_field_kwargs
-        )
+        extra_field_kwargs.update(extra_kwargs.get(self.field_name, {}))
+        field_kwargs = self.parent.include_extra_kwargs(field_kwargs, extra_field_kwargs)
 
         # Create the serializer field.
         return field_class(**field_kwargs)
@@ -131,7 +122,7 @@ class WriteListSerializeFriendlyRecursiveField(RecursiveField):
     @property
     def proxied(self):
         self._proxied = super().proxied
-        if (self._proxied and not self._proxied.context and self.bind_args[1] and self.bind_args[1].context):
+        if self._proxied and not self._proxied.context and self.bind_args[1] and self.bind_args[1].context:
             self._proxied.context = self.bind_args[1].context
         return self._proxied
 
@@ -140,7 +131,7 @@ class CommaSeparatedExportField(serializers.Field):
     export_attr = None
 
     def __init__(self, *args, **kwargs):
-        self.export_attr = kwargs.pop('export_attr', None)
+        self.export_attr = kwargs.pop("export_attr", None)
         super().__init__(*args, **kwargs)
 
     def get_attribute(self, instance):
@@ -150,16 +141,16 @@ class CommaSeparatedExportField(serializers.Field):
             if not self.required and self.default is empty:
                 raise SkipField()
             msg = (
-                'Got {exc_type} when attempting to get a value for field '
-                '`{field}` on serializer `{serializer}`.\nThe serializer '
-                'field might be named incorrectly and not match '
-                'any attribute or key on the `{instance}` instance.\n'
-                'Original exception text was: {exc}.'.format(
+                "Got {exc_type} when attempting to get a value for field "
+                "`{field}` on serializer `{serializer}`.\nThe serializer "
+                "field might be named incorrectly and not match "
+                "any attribute or key on the `{instance}` instance.\n"
+                "Original exception text was: {exc}.".format(
                     exc_type=type(exc).__name__,
                     field=self.field_name,
                     serializer=self.parent.__class__.__name__,
                     instance=instance.__class__.__name__,
-                    exc=exc
+                    exc=exc,
                 )
             )
             raise type(exc)(msg)
@@ -170,7 +161,7 @@ class CommaSeparatedExportField(serializers.Field):
         if self.export_attr:
             value = [get_attribute_smart(item, self.export_attr) for item in value]
 
-        return ', '.join([str(item) for item in value if item])
+        return ", ".join([str(item) for item in value if item])
 
 
 class DynamicChoicesField(serializers.ChoiceField):
@@ -190,9 +181,7 @@ class DynamicChoicesField(serializers.ChoiceField):
     def choice_strings_to_values(self):
         if isinstance(self.choices, Choices):
             return {k: v for k, v in self.choices}
-        return {
-            str(key): key for key in self.choices.keys()
-        }
+        return {str(key): key for key in self.choices.keys()}
 
     @choice_strings_to_values.setter
     def choice_strings_to_values(self, value):
@@ -201,9 +190,8 @@ class DynamicChoicesField(serializers.ChoiceField):
 
 
 class FunctionRelatedField(serializers.RelatedField):
-
     def __init__(self, callable_function=None, **kwargs):
-        assert callable_function is not None, 'The `callable_function` argument is required.'
+        assert callable_function is not None, "The `callable_function` argument is required."
         self.callable_function = callable_function
         super().__init__(**kwargs)
 
