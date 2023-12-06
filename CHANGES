@@ -1,6 +1,7 @@
 Release 0.8 (in development)
 -----------
-* added support to django 4.0 and 4.1
+* added support to Django 4.2 5.0
+* added support to python 3.11, 3.12
 
 
 Release 0.7
